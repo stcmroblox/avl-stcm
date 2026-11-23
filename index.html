@@ -454,4 +454,893 @@
             <span id="syncDot" class="dot"></span>
             <span id="syncLabel">Conectare...</span>
           </span>
-          <button
+          <button id="btnAddVehicle" type="button" class="btn-primary">+ Vehicul nou</button>
+          <button id="btnExportPdf" type="button">Export Repartizare (.pdf)</button>
+          <button id="btnResetFleet" type="button" class="btn-danger">Reset flotă</button>
+          <button id="btnLogout" type="button">Ieșire</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="k">Total vehicule</div>
+          <div id="statTotal" class="v">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="k">În traseu</div>
+          <div id="statTraseu" class="v">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="k">La depou</div>
+          <div id="statDepou" class="v">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="k">Rezervă / Defect</div>
+          <div id="statAltele" class="v">0</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="filter-row">
+          <div class="filter-left">
+            <input id="searchBox" type="search" placeholder="Caută parc, model, linie, tur, șofer..." style="min-width: 250px;" />
+            <select id="filterLine">
+              <option value="ALL">Toate liniile</option>
+              <option value="N/A">N/A (Depou)</option>
+              <option value="435">Linia 435</option>
+              <option value="470">Linia 470</option>
+              <option value="701">Linia 701</option>
+            </select>
+            <select id="filterStatus">
+              <option value="ALL">Toate statusurile</option>
+              <option value="La depou">La depou</option>
+              <option value="În traseu">În traseu</option>
+              <option value="Rezervă">Rezervă</option>
+              <option value="Defect / Revizie">Defect / Revizie</option>
+            </select>
+          </div>
+          <div class="filter-right">
+            <button id="btnReload" type="button">Sincronizează acum</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 130px;">PARC / NR.</th>
+                <th style="width: 185px;">MODEL</th>
+                <th style="width: 85px;">LINIA</th>
+                <th style="width: 85px;">TURUL</th>
+                <th style="width: 135px;">STATUS</th>
+                <th>ȘOFERI (SCHIMB 1 / SCHIMB 2)</th>
+                <th style="width: 235px;">ACȚIUNI</th>
+              </tr>
+            </thead>
+            <tbody id="fleetRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBSOL PAGINĂ HTML -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">MNSys<sup>TM</sup> Fleet Manager - Ecotrans STCM</div>
+        <div class="footer-notice">
+          Toate drepturile rezervate. Această aplicație este un sistem intern de dispecerat și evidență destinat exclusiv angajaților și dispecerilor autorizați Ecotrans STCM. Accesul neautorizat, copierea sau distribuirea datelor operaționale sunt interzise.
+        </div>
+      </div>
+      <div class="footer-right">
+        <div>Ecotrans STCM • Dispecerat Flotă</div>
+        <div>Uz intern — Personal autorizat</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL: SCHIMBĂ LINIA -->
+  <div id="lineModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 id="lineModalTitle" class="modal-title">Schimbă linia</h3>
+      <p id="lineModalSub" class="modal-sub"></p>
+
+      <div class="form-group">
+        <label for="lineSelect">Alege linia:</label>
+        <select id="lineSelect">
+          <option value="N/A">N/A (Fără linie / Depou)</option>
+          <option value="435">435</option>
+          <option value="470">470</option>
+          <option value="701">701</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button id="lineCancelBtn" type="button">Anulează</button>
+        <button id="lineSaveBtn" type="button" class="btn-primary">Salvează linia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SCHIMBĂ TURUL & STATUSUL -->
+  <div id="tourStatusModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 id="tsModalTitle" class="modal-title">Tur &amp; Status</h3>
+      <p id="tsModalSub" class="modal-sub"></p>
+
+      <div class="form-group">
+        <label for="tourSelect">Turul:</label>
+        <select id="tourSelect"></select>
+      </div>
+
+      <div class="form-group">
+        <label for="statusSelect">Status vehicul:</label>
+        <select id="statusSelect">
+          <option value="La depou">La depou</option>
+          <option value="În traseu">În traseu</option>
+          <option value="Rezervă">Rezervă</option>
+          <option value="Defect / Revizie">Defect / Revizie</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button id="tsCancelBtn" type="button">Anulează</button>
+        <button id="tsSaveBtn" type="button" class="btn-primary">Salvează</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REPARTIZEAZĂ ȘOFERI (SCHIMB 1 & SCHIMB 2) -->
+  <div id="driverModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 id="driverModalTitle" class="modal-title">Repartizează șoferi</h3>
+      <p id="driverModalSub" class="modal-sub"></p>
+
+      <div class="form-group">
+        <label for="driverShift1Select">Șofer schimb 1:</label>
+        <select id="driverShift1Select"></select>
+      </div>
+
+      <div class="form-group">
+        <label for="driverShift2Select">Șofer schimb 2:</label>
+        <select id="driverShift2Select"></select>
+      </div>
+
+      <div class="modal-footer">
+        <button id="driverClearBtn" type="button" class="btn-danger">Nerepartizat</button>
+        <button id="driverCancelBtn" type="button">Anulează</button>
+        <button id="driverSaveBtn" type="button" class="btn-primary">Salvează șoferii</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VEHICUL NOU -->
+  <div id="addVehicleModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 class="modal-title">Adaugă vehicul nou</h3>
+      <p class="modal-sub">Se adaugă direct în flota sincronizată în cloud.</p>
+
+      <div class="form-group">
+        <label for="addParcInput">Nr. parc / număr înmatriculare</label>
+        <input id="addParcInput" type="text" placeholder="Ex: IF 61 PCH" />
+      </div>
+      <div class="form-group">
+        <label for="addModelInput">Model vehicul</label>
+        <input id="addModelInput" type="text" placeholder="Ex: Karsan e-ATA 10" />
+      </div>
+      <div class="form-group">
+        <label for="addLineSelect">Linia inițială</label>
+        <select id="addLineSelect">
+          <option value="N/A">N/A (Depou)</option>
+          <option value="435">435</option>
+          <option value="470">470</option>
+          <option value="701">701</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button id="addCancelBtn" type="button">Anulează</button>
+        <button id="addSaveBtn" type="button" class="btn-primary">Adaugă</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      set,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDTw3dWbmNvea1ioGltPi0oTKREXMjSJFo",
+      authDomain: "avl-stcm.firebaseapp.com",
+      databaseURL: "https://avl-stcm-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "avl-stcm",
+      storageBucket: "avl-stcm.firebasestorage.app",
+      messagingSenderId: "31928551652",
+      appId: "1:31928551652:web:c04a691744224881ce04f1",
+      measurementId: "G-HSZ2MHYD8F"
+    };
+
+    // Ture fixe in functie de linie (435 -> 4 tururi, 470 -> 2 tururi, 701 -> 1 tur)
+    const TOURS_BY_LINE = {
+      "N/A": [""],
+      "435": ["", "T1", "T2", "T3", "T4"],
+      "470": ["", "T1", "T2"],
+      "701": ["", "T1"]
+    };
+
+    const PRESET_DRIVERS = [
+      "Void",
+      "MN",
+      "Vlad",
+      "Cristian",
+      "David",
+      "Clau",
+      "Damian",
+      "TransportEd",
+      "Nosiv",
+      "Miti",
+      "D4vid",
+      "Stefan",
+      "Yanis",
+      "Davidu1",
+      "Cezar",
+      "Dvx",
+      "Cristi"
+    ];
+
+    const DEFAULT_FLEET = [
+      { id: "IF 49 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 1 },
+      { id: "IF 56 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 2 },
+      { id: "IF 57 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 3 },
+      { id: "IF 58 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 4 },
+      { id: "IF 25 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 5 },
+      { id: "IF 38 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 6 },
+      { id: "IF 39 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 7 },
+      { id: "IF 40 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 8 },
+      { id: "IF 42 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 9 },
+      { id: "IF 49 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 10 },
+      { id: "IF 50 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 11 },
+      { id: "IF 51 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 12 },
+      { id: "IF 52 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 13 },
+      { id: "IF 53 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 14 },
+      { id: "IF 54 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 15 },
+      { id: "IF 55 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 16 },
+      { id: "IF 56 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 17 },
+      { id: "IF 57 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 18 },
+      { id: "IF 58 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 19 },
+      { id: "IF 59 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 20 },
+      { id: "IF 60 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 21 }
+    ];
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const fleetRef = ref(db, "fleet");
+    const scheduleTypeRef = ref(db, "scheduleType");
+
+    let fleet = [];
+    let scheduleType = "Zile lucrătoare";
+    let activeVehicleId = null;
+    let unsubFleet = null;
+    let unsubSchedule = null;
+
+    const loginView = document.getElementById("loginView");
+    const mainView = document.getElementById("mainView");
+    const loginForm = document.getElementById("loginForm");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPass = document.getElementById("loginPass");
+    const loginSubmit = document.getElementById("loginSubmit");
+    const loginErr = document.getElementById("loginErr");
+    const sessionMeta = document.getElementById("sessionMeta");
+    const scheduleTypeSelect = document.getElementById("scheduleTypeSelect");
+    const syncDot = document.getElementById("syncDot");
+    const syncLabel = document.getElementById("syncLabel");
+
+    const fleetRows = document.getElementById("fleetRows");
+    const searchBox = document.getElementById("searchBox");
+    const filterLine = document.getElementById("filterLine");
+    const filterStatus = document.getElementById("filterStatus");
+
+    const statTotal = document.getElementById("statTotal");
+    const statTraseu = document.getElementById("statTraseu");
+    const statDepou = document.getElementById("statDepou");
+    const statAltele = document.getElementById("statAltele");
+
+    // Modale
+    const lineModal = document.getElementById("lineModal");
+    const lineModalTitle = document.getElementById("lineModalTitle");
+    const lineModalSub = document.getElementById("lineModalSub");
+    const lineSelect = document.getElementById("lineSelect");
+    const lineCancelBtn = document.getElementById("lineCancelBtn");
+    const lineSaveBtn = document.getElementById("lineSaveBtn");
+
+    const tourStatusModal = document.getElementById("tourStatusModal");
+    const tsModalTitle = document.getElementById("tsModalTitle");
+    const tsModalSub = document.getElementById("tsModalSub");
+    const tourSelect = document.getElementById("tourSelect");
+    const statusSelect = document.getElementById("statusSelect");
+    const tsCancelBtn = document.getElementById("tsCancelBtn");
+    const tsSaveBtn = document.getElementById("tsSaveBtn");
+
+    const driverModal = document.getElementById("driverModal");
+    const driverModalTitle = document.getElementById("driverModalTitle");
+    const driverModalSub = document.getElementById("driverModalSub");
+    const driverShift1Select = document.getElementById("driverShift1Select");
+    const driverShift2Select = document.getElementById("driverShift2Select");
+    const driverClearBtn = document.getElementById("driverClearBtn");
+    const driverCancelBtn = document.getElementById("driverCancelBtn");
+    const driverSaveBtn = document.getElementById("driverSaveBtn");
+
+    const addVehicleModal = document.getElementById("addVehicleModal");
+    const addParcInput = document.getElementById("addParcInput");
+    const addModelInput = document.getElementById("addModelInput");
+    const addLineSelect = document.getElementById("addLineSelect");
+    const addCancelBtn = document.getElementById("addCancelBtn");
+    const addSaveBtn = document.getElementById("addSaveBtn");
+
+    // Elimină diacriticele pentru textul din PDF
+    function stripDiacritics(str) {
+      return String(str ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ș/g, "s")
+        .replace(/Ș/g, "S")
+        .replace(/ț/g, "t")
+        .replace(/Ț/g, "T")
+        .replace(/ă/g, "a")
+        .replace(/Ă/g, "A")
+        .replace(/â/g, "a")
+        .replace(/Â/g, "A")
+        .replace(/î/g, "i")
+        .replace(/Î/g, "I");
+    }
+
+    function setSyncStatus(mode, text) {
+      syncDot.className = "dot";
+      if (mode === "ok") syncDot.classList.add("ok");
+      if (mode === "err") syncDot.classList.add("err");
+      syncLabel.textContent = text;
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function normalizeFleet(raw) {
+      if (!raw) return [];
+      const arr = Array.isArray(raw) ? raw : Object.values(raw);
+      return arr
+        .filter((u) => u && u.id)
+        .map((u, idx) => {
+          let line = String(u.line ?? "N/A").trim();
+          if (line === "0" || !line) line = "N/A";
+          const legacyDriver = String(u.driver || "").trim();
+          const d1 = String(u.driver1 ?? legacyDriver ?? "").trim();
+          const d2 = String(u.driver2 ?? "").trim();
+          return {
+            id: String(u.id).trim(),
+            model: String(u.model || "").trim(),
+            line: line,
+            tour: String(u.tour || "").trim(),
+            status: String(u.status || "La depou").trim(),
+            driver1: d1,
+            driver2: d2,
+            sort_order: Number.isFinite(Number(u.sort_order)) ? Number(u.sort_order) : idx + 1
+          };
+        })
+        .sort((a, b) => a.sort_order - b.sort_order || a.id.localeCompare(b.id));
+    }
+
+    async function persistFleet(nextFleet) {
+      setSyncStatus("", "Se salvează...");
+      try {
+        await auth.authStateReady();
+        const ordered = nextFleet.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
+        await set(fleetRef, ordered);
+        setSyncStatus("ok", "Salvat în cloud");
+      } catch (err) {
+        console.error(err);
+        setSyncStatus("err", "Eroare salvare");
+      }
+    }
+
+    async function persistScheduleType(type) {
+      setSyncStatus("", "Se salvează programul...");
+      try {
+        await auth.authStateReady();
+        await set(scheduleTypeRef, type);
+        setSyncStatus("ok", "Salvat în cloud");
+      } catch (err) {
+        console.error(err);
+        setSyncStatus("err", "Eroare salvare program");
+      }
+    }
+
+    function statusPillClass(status) {
+      if (status === "În traseu") return "pill pill-traseu";
+      if (status === "Rezervă") return "pill pill-rezerva";
+      if (status === "Defect / Revizie") return "pill pill-defect";
+      return "pill pill-depou";
+    }
+
+    function formatDriversHtml(u) {
+      const s1 = u.driver1 ? escapeHtml(u.driver1) : `<span class="muted-text">Nerepartizat</span>`;
+      const s2 = u.driver2 ? escapeHtml(u.driver2) : `<span class="muted-text">Nerepartizat</span>`;
+      return `
+        <span class="shift-line"><span class="shift-label">Schimb 1:</span> ${s1}</span>
+        <span class="shift-line"><span class="shift-label">Schimb 2:</span> ${s2}</span>
+      `;
+    }
+
+    function formatDriversPdf(u) {
+      const s1 = u.driver1 ? stripDiacritics(u.driver1) : "Nerepartizat";
+      const s2 = u.driver2 ? stripDiacritics(u.driver2) : "Nerepartizat";
+      return `Schimb 1: ${s1} | Schimb 2: ${s2}`;
+    }
+
+    function refreshStats() {
+      statTotal.textContent = String(fleet.length);
+      statTraseu.textContent = String(fleet.filter((u) => u.status === "În traseu").length);
+      statDepou.textContent = String(fleet.filter((u) => u.status === "La depou").length);
+      statAltele.textContent = String(
+        fleet.filter((u) => u.status === "Rezervă" || u.status === "Defect / Revizie").length
+      );
+    }
+
+    function renderFleet() {
+      refreshStats();
+
+      const q = searchBox.value.trim().toLowerCase();
+      const lf = filterLine.value;
+      const sf = filterStatus.value;
+
+      const list = fleet.filter((u) => {
+        const okLine = lf === "ALL" || u.line === lf;
+        const okStatus = sf === "ALL" || u.status === sf;
+        const okQuery =
+          !q ||
+          u.id.toLowerCase().includes(q) ||
+          u.model.toLowerCase().includes(q) ||
+          u.line.toLowerCase().includes(q) ||
+          u.tour.toLowerCase().includes(q) ||
+          u.driver1.toLowerCase().includes(q) ||
+          u.driver2.toLowerCase().includes(q);
+        return okLine && okStatus && okQuery;
+      });
+
+      fleetRows.innerHTML = "";
+
+      for (const u of list) {
+        const tr = document.createElement("tr");
+
+        const tdParc = document.createElement("td");
+        tdParc.innerHTML = `<strong>${escapeHtml(u.id)}</strong>`;
+
+        const tdModel = document.createElement("td");
+        tdModel.textContent = u.model;
+
+        const tdLine = document.createElement("td");
+        tdLine.innerHTML = `<strong>${escapeHtml(u.line || "N/A")}</strong>`;
+
+        const tdTour = document.createElement("td");
+        tdTour.innerHTML = u.tour
+          ? `<strong>${escapeHtml(u.tour)}</strong>`
+          : `<span class="muted-text">—</span>`;
+
+        const tdStatus = document.createElement("td");
+        tdStatus.innerHTML = `<span class="${statusPillClass(u.status)}">${escapeHtml(u.status)}</span>`;
+
+        const tdDriver = document.createElement("td");
+        tdDriver.innerHTML = formatDriversHtml(u);
+
+        const tdAct = document.createElement("td");
+        const actBox = document.createElement("div");
+        actBox.className = "row-actions";
+
+        const btnLine = document.createElement("button");
+        btnLine.type = "button";
+        btnLine.className = "btn-sm";
+        btnLine.textContent = "Schimbă linia";
+        btnLine.addEventListener("click", () => openLineModal(u));
+
+        const btnTourStatus = document.createElement("button");
+        btnTourStatus.type = "button";
+        btnTourStatus.className = "btn-sm";
+        btnTourStatus.textContent = "Tur / Status";
+        btnTourStatus.addEventListener("click", () => openTourStatusModal(u));
+
+        const btnDriver = document.createElement("button");
+        btnDriver.type = "button";
+        btnDriver.className = "btn-sm";
+        btnDriver.textContent = "Repartizează șofer";
+        btnDriver.addEventListener("click", () => openDriverModal(u));
+
+        actBox.append(btnLine, btnTourStatus, btnDriver);
+        tdAct.appendChild(actBox);
+
+        tr.append(tdParc, tdModel, tdLine, tdTour, tdStatus, tdDriver, tdAct);
+        fleetRows.appendChild(tr);
+      }
+    }
+
+    function openLineModal(unit) {
+      activeVehicleId = unit.id;
+      lineModalTitle.textContent = `Schimbă linia — ${unit.id}`;
+      lineModalSub.textContent = `${unit.model} • Linia curentă: ${unit.line || "N/A"}`;
+      lineSelect.value = ["435", "470", "701"].includes(unit.line) ? unit.line : "N/A";
+      lineModal.classList.add("open");
+    }
+
+    lineCancelBtn.addEventListener("click", () => lineModal.classList.remove("open"));
+
+    lineSaveBtn.addEventListener("click", async () => {
+      if (!activeVehicleId) return;
+      const chosenLine = lineSelect.value;
+
+      fleet = fleet.map((u) => {
+        if (u.id !== activeVehicleId) return u;
+        const validTours = TOURS_BY_LINE[chosenLine] || [""];
+        const nextTour = validTours.includes(u.tour) ? u.tour : "";
+        const nextStatus = chosenLine === "N/A" && u.status === "În traseu" ? "La depou" : u.status;
+        return { ...u, line: chosenLine, tour: nextTour, status: nextStatus };
+      });
+
+      lineModal.classList.remove("open");
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
+    function openTourStatusModal(unit) {
+      activeVehicleId = unit.id;
+      tsModalTitle.textContent = `Tur & Status — ${unit.id}`;
+      tsModalSub.textContent = `${unit.model} • Linia: ${unit.line || "N/A"}`;
+
+      const validTours = TOURS_BY_LINE[unit.line] || [""];
+      tourSelect.innerHTML = validTours
+        .map((t) =>
+          t === ""
+            ? `<option value="">Fără tur</option>`
+            : `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`
+        )
+        .join("");
+
+      tourSelect.value = validTours.includes(unit.tour) ? unit.tour : "";
+      statusSelect.value = unit.status || "La depou";
+      tourStatusModal.classList.add("open");
+    }
+
+    tsCancelBtn.addEventListener("click", () => tourStatusModal.classList.remove("open"));
+
+    tsSaveBtn.addEventListener("click", async () => {
+      if (!activeVehicleId) return;
+      const chosenTour = tourSelect.value;
+      const chosenStatus = statusSelect.value;
+
+      fleet = fleet.map((u) =>
+        u.id === activeVehicleId ? { ...u, tour: chosenTour, status: chosenStatus } : u
+      );
+
+      tourStatusModal.classList.remove("open");
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
+    function buildDriverOptionsHtml() {
+      return (
+        `<option value="">Nerepartizat</option>` +
+        PRESET_DRIVERS.map((d) => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join("")
+      );
+    }
+
+    function openDriverModal(unit) {
+      activeVehicleId = unit.id;
+      driverModalTitle.textContent = `Repartizează șoferi — ${unit.id}`;
+      driverModalSub.textContent = `${unit.model} • Linia: ${unit.line || "N/A"}`;
+
+      const opts = buildDriverOptionsHtml();
+      driverShift1Select.innerHTML = opts;
+      driverShift2Select.innerHTML = opts;
+
+      driverShift1Select.value = PRESET_DRIVERS.includes(unit.driver1) ? unit.driver1 : "";
+      driverShift2Select.value = PRESET_DRIVERS.includes(unit.driver2) ? unit.driver2 : "";
+
+      driverModal.classList.add("open");
+      driverShift1Select.focus();
+    }
+
+    driverCancelBtn.addEventListener("click", () => driverModal.classList.remove("open"));
+
+    driverClearBtn.addEventListener("click", async () => {
+      if (!activeVehicleId) return;
+      fleet = fleet.map((u) =>
+        u.id === activeVehicleId ? { ...u, driver1: "", driver2: "" } : u
+      );
+      driverModal.classList.remove("open");
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
+    driverSaveBtn.addEventListener("click", async () => {
+      if (!activeVehicleId) return;
+      const d1 = driverShift1Select.value;
+      const d2 = driverShift2Select.value;
+
+      fleet = fleet.map((u) =>
+        u.id === activeVehicleId ? { ...u, driver1: d1, driver2: d2 } : u
+      );
+      driverModal.classList.remove("open");
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
+    document.getElementById("btnAddVehicle").addEventListener("click", () => {
+      addParcInput.value = "";
+      addModelInput.value = "";
+      addLineSelect.value = "N/A";
+      addVehicleModal.classList.add("open");
+      addParcInput.focus();
+    });
+
+    addCancelBtn.addEventListener("click", () => addVehicleModal.classList.remove("open"));
+
+    addSaveBtn.addEventListener("click", async () => {
+      const id = addParcInput.value.trim();
+      const model = addModelInput.value.trim();
+      const line = addLineSelect.value;
+      if (!id || !model) {
+        alert("Completează numărul de parc și modelul.");
+        return;
+      }
+      if (fleet.some((u) => u.id.toLowerCase() === id.toLowerCase())) {
+        alert("Există deja un vehicul cu acest număr de parc.");
+        return;
+      }
+      fleet = [
+        ...fleet,
+        { id, model, line, tour: "", status: "La depou", driver1: "", driver2: "", sort_order: fleet.length + 1 }
+      ];
+      addVehicleModal.classList.remove("open");
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
+    scheduleTypeSelect.addEventListener("change", async () => {
+      scheduleType = scheduleTypeSelect.value;
+      await persistScheduleType(scheduleType);
+    });
+
+    document.getElementById("btnResetFleet").addEventListener("click", async () => {
+      if (!confirm("Resetezi flota la cele 21 de vehicule implicite în cloud?")) return;
+      fleet = DEFAULT_FLEET.map((u) => ({ ...u }));
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
+    // EXPORT REPARTIZARE PDF (fara diacritice, spatiere curata, schimburi 1 si 2)
+    document.getElementById("btnExportPdf").addEventListener("click", () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+      const activeVehicles = fleet.filter((u) => u.status === "În traseu" && u.line !== "N/A");
+      const cleanSchedule = stripDiacritics(scheduleType);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(15);
+      doc.text("Ecotrans STCM - Repartizare Flota", 14, 16);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Program: ${cleanSchedule}`, 14, 22);
+
+      let currentY = 29;
+      const lines = ["435", "470", "701"];
+
+      lines.forEach((lineNo) => {
+        const lineUnits = activeVehicles.filter((u) => u.line === lineNo);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11.5);
+        doc.text(`Linia: ${lineNo}`, 14, currentY);
+        currentY += 2.5;
+
+        const tableData = lineUnits.map((u) => [
+          u.tour ? stripDiacritics(u.tour) : "-",
+          stripDiacritics(u.id),
+          stripDiacritics(u.model),
+          formatDriversPdf(u)
+        ]);
+
+        if (tableData.length === 0) {
+          tableData.push(["-", "-", "Fara vehicule in traseu", "-"]);
+        }
+
+        doc.autoTable({
+          startY: currentY,
+          head: [["TUR", "PARC / NR.", "MODEL", "SOFERI (SCHIMB 1 / SCHIMB 2)"]],
+          body: tableData,
+          theme: "grid",
+          styles: {
+            fontSize: 8.8,
+            cellPadding: 2.6,
+            font: "helvetica",
+            textColor: [20, 20, 20],
+            lineColor: [200, 200, 200],
+            lineWidth: 0.2,
+            overflow: "linebreak"
+          },
+          headStyles: {
+            fillColor: [240, 244, 248],
+            textColor: [15, 23, 42],
+            fontStyle: "bold",
+            halign: "left"
+          },
+          columnStyles: {
+            0: { cellWidth: 18, halign: "left" },
+            1: { cellWidth: 32, fontStyle: "bold", halign: "left" },
+            2: { cellWidth: 44, halign: "left" },
+            3: { cellWidth: 88, halign: "left" }
+          },
+          margin: { left: 14, right: 14 }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 7;
+      });
+
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const now = new Date();
+      const dateStr = `${String(now.getDate()).padStart(2, "0")}.${String(now.getMonth() + 1).padStart(2, "0")}.${now.getFullYear()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+      doc.setDrawColor(160, 160, 160);
+      doc.setLineWidth(0.3);
+      doc.line(14, pageHeight - 16, 196, pageHeight - 16);
+
+      doc.setTextColor(30, 30, 30);
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "bold");
+      doc.text("MNSys", 14, pageHeight - 10);
+      doc.setFontSize(5.5);
+      doc.text("TM", 24.5, pageHeight - 12);
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "normal");
+      doc.text("Fleet Manager - Ecotrans STCM", 28.5, pageHeight - 10);
+
+      doc.text(`GENERAT LA DATA: ${dateStr}`, 196, pageHeight - 10, { align: "right" });
+
+      doc.save(`Repartizare_STCM_${now.toISOString().slice(0, 10)}.pdf`);
+    });
+
+    document.getElementById("btnReload").addEventListener("click", async () => {
+      setSyncStatus("", "Sincronizare...");
+      try {
+        await auth.authStateReady();
+        const snapFleet = await get(fleetRef);
+        fleet = normalizeFleet(snapFleet.val());
+        const snapSched = await get(scheduleTypeRef);
+        if (snapSched.exists()) {
+          scheduleType = snapSched.val();
+          scheduleTypeSelect.value = scheduleType;
+        }
+        renderFleet();
+        setSyncStatus("ok", "Salvat în cloud");
+      } catch (err) {
+        console.error(err);
+        setSyncStatus("err", "Eroare sincronizare");
+      }
+    });
+
+    searchBox.addEventListener("input", renderFleet);
+    filterLine.addEventListener("change", renderFleet);
+    filterStatus.addEventListener("change", renderFleet);
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginErr.style.display = "none";
+      loginSubmit.disabled = true;
+      loginSubmit.textContent = "Se conectează...";
+
+      try {
+        await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPass.value);
+      } catch (err) {
+        console.error(err);
+        loginErr.textContent = "Autentificare eșuată. Verifică emailul și parola din Firebase Authentication.";
+        loginErr.style.display = "block";
+      } finally {
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = "Log in";
+      }
+    });
+
+    document.getElementById("btnLogout").addEventListener("click", async () => {
+      if (unsubFleet) { unsubFleet(); unsubFleet = null; }
+      if (unsubSchedule) { unsubSchedule(); unsubSchedule = null; }
+      await signOut(auth);
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        if (unsubFleet) { unsubFleet(); unsubFleet = null; }
+        if (unsubSchedule) { unsubSchedule(); unsubSchedule = null; }
+        mainView.classList.add("hidden");
+        loginView.classList.remove("hidden");
+        return;
+      }
+
+      loginView.classList.add("hidden");
+      mainView.classList.remove("hidden");
+      sessionMeta.textContent = `Conectat: ${user.email} • Sincronizare cloud Firebase Realtime Database`;
+      setSyncStatus("", "Se încarcă datele...");
+
+      try {
+        await auth.authStateReady();
+        const snapSched = await get(scheduleTypeRef);
+        if (snapSched.exists()) {
+          scheduleType = snapSched.val();
+          scheduleTypeSelect.value = scheduleType;
+        } else {
+          await set(scheduleTypeRef, scheduleType);
+        }
+
+        const snapFleet = await get(fleetRef);
+        if (!snapFleet.exists()) {
+          fleet = DEFAULT_FLEET.map((u) => ({ ...u }));
+          await set(fleetRef, fleet);
+        } else {
+          fleet = normalizeFleet(snapFleet.val());
+        }
+        renderFleet();
+        setSyncStatus("ok", "Salvat în cloud");
+      } catch (err) {
+        console.error(err);
+        setSyncStatus("err", "Eroare permisiuni");
+      }
+
+      if (unsubFleet) unsubFleet();
+      unsubFleet = onValue(
+        fleetRef,
+        (snapshot) => {
+          if (snapshot.exists()) {
+            fleet = normalizeFleet(snapshot.val());
+            renderFleet();
+            setSyncStatus("ok", "Salvat în cloud");
+          }
+        },
+        (err) => {
+          console.error(err);
+          setSyncStatus("err", "Eroare sincronizare");
+        }
+      );
+
+      if (unsubSchedule) unsubSchedule();
+      unsubSchedule = onValue(
+        scheduleTypeRef,
+        (snapshot) => {
+          if (snapshot.exists()) {
+            scheduleType = snapshot.val();
+            scheduleTypeSelect.value = scheduleType;
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+    });
+  </script>
+</body>
+</html>
