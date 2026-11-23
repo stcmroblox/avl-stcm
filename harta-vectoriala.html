@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ecotrans STCM — Hartă Vectorială</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #111827;
+      --panel-2: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #283548;
+      --accent: #38bdf8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .topbar .sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button {
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 7px 12px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2b3d59;
+    }
+
+    #map {
+      flex: 1 1 auto;
+      width: 100%;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Ecotrans STCM — Hartă Vectorială (OpenStreetMap / Leaflet)</h1>
+      <div class="sub">Zona Chitila — Ilfov • Hartă interactivă</div>
+    </div>
+    <div class="actions">
+      <button id="btnCenterChitila" type="button">Centrează Chitila</button>
+      <button id="btnCloseWindow" type="button">Închide fereastra</button>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+  ></script>
+  <script>
+    const CHITILA_COORDS = [44.5067, 25.9839];
+
+    const map = L.map("map").setView(CHITILA_COORDS, 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    L.marker(CHITILA_COORDS)
+      .addTo(map)
+      .bindPopup("<strong>Chitila</strong><br/>Zonă operare Ecotrans STCM")
+      .openPopup();
+
+    document.getElementById("btnCenterChitila").addEventListener("click", () => {
+      map.setView(CHITILA_COORDS, 14);
+    });
+
+    document.getElementById("btnCloseWindow").addEventListener("click", () => {
+      window.close();
+    });
+  </script>
+</body>
+</html>
