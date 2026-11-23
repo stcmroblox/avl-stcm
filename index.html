@@ -454,8 +454,9 @@
             <span id="syncDot" class="dot"></span>
             <span id="syncLabel">Conectare...</span>
           </span>
-       
+          <button id="btnAddVehicle" type="button" class="btn-primary">+ Vehicul nou</button>
           <button id="btnExportPdf" type="button">Export Repartizare (.pdf)</button>
+          <button id="btnResetFleet" type="button" class="btn-danger">Reset flotă</button>
           <button id="btnLogout" type="button">Log out</button>
         </div>
       </div>
@@ -498,7 +499,9 @@
               <option value="Defect / Revizie">Defect / Revizie</option>
             </select>
           </div>
-         
+          <div class="filter-right">
+            <button id="btnReload" type="button">Sincronizează acum</button>
+          </div>
         </div>
 
         <div class="table-wrap">
@@ -612,8 +615,36 @@
     </div>
   </div>
 
+  <!-- MODAL: VEHICUL NOU -->
+  <div id="addVehicleModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 class="modal-title">Adaugă vehicul nou</h3>
+      <p class="modal-sub">Se adaugă direct în flota sincronizată în cloud.</p>
 
+      <div class="form-group">
+        <label for="addParcInput">Nr. parc / număr înmatriculare</label>
+        <input id="addParcInput" type="text" placeholder="Ex: IF 61 PCH" />
+      </div>
+      <div class="form-group">
+        <label for="addModelInput">Model vehicul</label>
+        <input id="addModelInput" type="text" placeholder="Ex: Karsan e-ATA 10" />
+      </div>
+      <div class="form-group">
+        <label for="addLineSelect">Linia inițială</label>
+        <select id="addLineSelect">
+          <option value="N/A">N/A (Depou)</option>
+          <option value="435">435</option>
+          <option value="470">470</option>
+          <option value="701">701</option>
+        </select>
+      </div>
 
+      <div class="modal-footer">
+        <button id="addCancelBtn" type="button">Anulează</button>
+        <button id="addSaveBtn" type="button" class="btn-primary">Adaugă</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
