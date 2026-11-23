@@ -8,134 +8,229 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <style>
     :root {
-      --bg: #0b1120;
-      --panel: #111827;
-      --panel-2: #1e293b;
-      --panel-3: #0f172a;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --border: #283548;
-      --primary: #0284c7;
-      --primary-hover: #0369a1;
-      --accent: #38bdf8;
-      --ok: #22c55e;
-      --warn: #f59e0b;
-      --bad: #ef4444;
+      --bg-top: #d7e4f2;
+      --bg-bottom: #a5bddb;
+      --header-bg: linear-gradient(180deg, #4b73a3 0%, #28476e 50%, #1d3554 51%, #2a4d78 100%);
+      --toolbar-bg: linear-gradient(180deg, #f7f9fc 0%, #dce5f0 100%);
+      --panel-bg: linear-gradient(180deg, #ffffff 0%, #e9eff6 100%);
+      --button-bg: linear-gradient(180deg, #ffffff 0%, #e4e9ef 48%, #c6d1de 50%, #dce3ec 100%);
+      --button-hover: linear-gradient(180deg, #ffffff 0%, #edf4fc 48%, #b6d3f7 50%, #cbe0f8 100%);
+      --button-primary: linear-gradient(180deg, #6fa7e8 0%, #3474c4 50%, #1c539b 51%, #2864b5 100%);
+      --button-danger: linear-gradient(180deg, #f99696 0%, #de4141 50%, #bf1c1c 51%, #d63131 100%);
+      --table-header: linear-gradient(180deg, #e8eff8 0%, #d2dfee 50%, #bdd0e6 51%, #cbd9ec 100%);
+      --text: #1f2933;
+      --muted: #52606d;
+      --border: #7d9ab8;
+      --border-dark: #466382;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-      background: var(--bg);
+      font-family: Tahoma, Verdana, Arial, sans-serif;
+      font-size: 12px;
       color: var(--text);
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      background-attachment: fixed;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
     .wrap {
-      max-width: 1380px;
+      max-width: 1340px;
       width: 100%;
-      margin: 0 auto;
-      padding: 20px;
+      margin: 14px auto;
+      padding: 0 14px;
       flex: 1 0 auto;
     }
 
-    .header-bar {
+    /* CADRU PRINCIPAL TIP FEREASTRĂ DESKTOP ANII 2010 */
+    .desktop-frame {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      outline: 1px solid var(--border-dark);
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(10, 28, 56, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      overflow: hidden;
+    }
+
+    .title-bar {
+      background: var(--header-bg);
+      border-bottom: 1px solid #162840;
+      padding: 10px 14px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 18px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
+      font-size: 15px;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
     }
 
     .brand .sub {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-top: 3px;
+      margin-top: 2px;
+      font-size: 11px;
+      color: #d6e6fa;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.55);
     }
 
-    .top-actions {
+    .toolbar {
+      background: var(--toolbar-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      box-shadow: inset 0 1px 0 #ffffff;
     }
 
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
     }
 
-    .stat-box {
-      background: var(--panel);
+    .workspace {
+      padding: 12px;
+    }
+
+    /* TAB-URI RAPIDE DE STATUS (STIL 2010) */
+    .quick-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .tab-btn {
+      padding: 5px 10px;
+      border-radius: 4px 4px 0 0;
+      border: 1px solid #8fa9c4;
+      border-bottom: none;
+      background: linear-gradient(180deg, #edf3f9 0%, #cedbe9 100%);
+      color: #263b54;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(180deg, #ffffff 0%, #e7eff8 100%);
+      color: #123663;
+      border-color: var(--border-dark);
+      box-shadow: inset 0 2px 0 #3b82f6, 0 -1px 2px rgba(0, 0, 0, 0.08);
+      position: relative;
+      top: 1px;
+      padding-bottom: 6px;
+    }
+
+    .tab-count {
+      background: #d9e4f0;
+      border: 1px solid #9cb3cb;
+      border-radius: 8px;
+      padding: 0 5px;
+      font-size: 10px;
+      color: #1c3554;
+    }
+
+    .tab-btn.active .tab-count {
+      background: #2f6ec0;
+      border-color: #1b4885;
+      color: #ffffff;
+    }
+
+    /* BARĂ INSPECTOR VEHICUL SELECTAT */
+    .inspector-strip {
+      background: linear-gradient(180deg, #f8fbfe 0%, #e3ecf6 100%);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
+      border-radius: 5px;
+      padding: 7px 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      box-shadow: inset 0 1px 0 #ffffff;
     }
 
-    .stat-box .k {
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      color: var(--muted);
-      letter-spacing: 0.04em;
+    .inspector-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
     }
 
-    .stat-box .v {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin-top: 4px;
+    .inspector-tag {
+      background: #1e3d66;
+      color: #ffffff;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+      letter-spacing: 0.3px;
     }
 
     .panel {
-      background: var(--panel);
+      background: var(--panel-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      border-radius: 5px;
+      padding: 10px;
+      box-shadow: inset 0 1px 0 #ffffff, 0 1px 3px rgba(0, 0, 0, 0.08);
     }
 
     .filter-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      background: #e3ecf6;
+      border: 1px solid #b5c7db;
+      border-radius: 4px;
+      padding: 7px 8px;
     }
 
     .filter-left, .filter-right {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
       align-items: center;
+      gap: 6px;
     }
 
     .field-inline {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: var(--panel-3);
+      gap: 5px;
+      background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 4px 8px;
+      border-radius: 3px;
+      padding: 2px 6px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
     }
 
     .field-inline label {
-      font-size: 0.78rem;
+      font-size: 11px;
+      font-weight: bold;
       color: var(--muted);
       white-space: nowrap;
     }
@@ -143,88 +238,94 @@
     .field-inline select {
       border: none;
       background: transparent;
-      padding: 4px 6px;
-      font-weight: 600;
-      color: var(--accent);
+      box-shadow: none;
+      padding: 2px 4px;
+      font-weight: bold;
+      color: #1b4f93;
       cursor: pointer;
-    }
-
-    .field-inline select option {
-      background: var(--panel);
-      color: var(--text);
     }
 
     input, select, button {
-      font: inherit;
-      border-radius: 7px;
-      border: 1px solid var(--border);
-      background: var(--panel-2);
-      color: var(--text);
-      padding: 8px 11px;
+      font-family: inherit;
+      font-size: 11px;
+      border-radius: 3px;
+      outline: none;
     }
 
-    input::placeholder { color: var(--muted); }
+    input[type="text"], input[type="email"], input[type="password"], input[type="search"], select {
+      border: 1px solid var(--border-dark);
+      padding: 4px 7px;
+      background: #ffffff linear-gradient(180deg, #f2f5f9 0%, #ffffff 22%);
+      color: var(--text);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.14);
+    }
+
+    input:focus, select:focus {
+      border-color: #2563eb;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.14), 0 0 4px rgba(37, 99, 235, 0.45);
+    }
 
     button {
       cursor: pointer;
-      background: #1f2d42;
-      transition: background 0.14s ease, border-color 0.14s ease;
+      border: 1px solid #6f88a3;
+      background: var(--button-bg);
+      color: #19314e;
+      font-weight: bold;
+      padding: 4px 9px;
+      text-shadow: 0 1px 0 #ffffff;
+      box-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(0, 0, 0, 0.14);
     }
 
     button:hover:not(:disabled) {
-      background: #2b3d59;
+      background: var(--button-hover);
+      border-color: #486e9b;
+      color: #0d2138;
+    }
+
+    button:active:not(:disabled) {
+      background: linear-gradient(180deg, #c6d1de 0%, #e4e9ef 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22);
     }
 
     button:disabled {
-      opacity: 0.55;
+      opacity: 0.58;
       cursor: not-allowed;
     }
 
     button.btn-primary {
-      background: var(--primary);
-      border-color: var(--accent);
-      color: #fff;
-      font-weight: 600;
+      background: var(--button-primary);
+      border-color: #163e75;
+      color: #ffffff;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     button.btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
+      background: linear-gradient(180deg, #81b6f3 0%, #4381cf 50%, #245fa9 51%, #3170c2 100%);
+      color: #ffffff;
     }
 
     button.btn-danger {
-      background: rgba(239, 68, 68, 0.14);
-      border-color: rgba(239, 68, 68, 0.45);
-      color: #fca5a5;
+      background: var(--button-danger);
+      border-color: #871313;
+      color: #ffffff;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    button.btn-danger:hover:not(:disabled) {
+      background: linear-gradient(180deg, #fba6a6 0%, #e65151 50%, #cf2525 51%, #e03e3e 100%);
     }
 
     button.btn-sm {
-      padding: 5px 9px;
-      font-size: 0.82rem;
+      padding: 3px 6px;
+      font-size: 10px;
     }
-
-    .sync-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--warn);
-    }
-    .dot.ok { background: var(--ok); }
-    .dot.err { background: var(--bad); }
 
     .table-wrap {
       overflow-x: auto;
+      border: 1px solid var(--border-dark);
+      border-radius: 3px;
+      background: #ffffff;
     }
 
     table {
@@ -234,98 +335,158 @@
     }
 
     th, td {
-      padding: 10px 12px;
+      padding: 7px 9px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
+      border-bottom: 1px solid #d2dde9;
+      border-right: 1px solid #e3ebf3;
+      font-size: 11px;
       vertical-align: middle;
     }
 
-    th {
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-      background: var(--panel-3);
+    th:last-child, td:last-child {
+      border-right: none;
     }
 
-    tr:hover td {
-      background: rgba(30, 41, 59, 0.45);
+    th {
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #1c3758;
+      background: var(--table-header);
+      border-bottom: 1px solid var(--border-dark);
+      text-shadow: 0 1px 0 #ffffff;
+    }
+
+    tbody tr {
+      cursor: pointer;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f8fbfe;
+    }
+
+    tbody tr:hover td {
+      background-color: #eaf3fd;
+    }
+
+    tbody tr.selected td {
+      background-color: #d6e8fc;
+      border-bottom-color: #8bb5e3;
     }
 
     .pill {
       display: inline-block;
-      padding: 3px 9px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: bold;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
-    .pill-depou { background: rgba(148, 163, 184, 0.16); color: #cbd5e1; }
-    .pill-traseu { background: rgba(34, 197, 94, 0.16); color: #86efac; }
-    .pill-rezerva { background: rgba(245, 158, 11, 0.16); color: #fcd34d; }
-    .pill-defect { background: rgba(239, 68, 68, 0.16); color: #fca5a5; }
+    .pill-depou { background: linear-gradient(180deg, #e5e7eb 0%, #cbd5e1 100%); color: #334155; }
+    .pill-traseu { background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 100%); color: #14532d; }
+    .pill-rezerva { background: linear-gradient(180deg, #fef08a 0%, #facc15 100%); color: #713f12; }
+    .pill-defect { background: linear-gradient(180deg, #fca5a5 0%, #f87171 100%); color: #7f1d1d; }
 
-    .muted-text { color: var(--muted); }
+    .muted-text { color: #6b7280; font-style: italic; }
 
     .shift-line {
       display: block;
-      line-height: 1.45;
+      line-height: 1.35;
     }
 
     .shift-label {
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 600;
+      color: #4b5563;
+      font-size: 10px;
+      font-weight: bold;
     }
 
     .row-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 4px;
     }
 
-    /* LOGIN BOX */
+    /* STATUS BAR DESKTOP ANII 2010 */
+    .status-bar {
+      background: linear-gradient(180deg, #dce5f0 0%, #c8d5e5 100%);
+      border-top: 1px solid var(--border);
+      padding: 5px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #2b3f56;
+      box-shadow: inset 0 1px 0 #ffffff;
+    }
+
+    /* LOGIN CARD */
     .login-card {
-      max-width: 410px;
-      margin: 60px auto;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 22px;
+      max-width: 390px;
+      margin: 64px auto;
+      background: linear-gradient(180deg, #ffffff 0%, #e7eff8 100%);
+      border: 1px solid var(--border-dark);
+      border-radius: 7px;
+      box-shadow: 0 12px 28px rgba(0, 20, 48, 0.32);
+      overflow: hidden;
     }
 
-    .login-card h2 { margin: 0 0 6px 0; font-size: 1.25rem; }
-    .login-card p { margin: 0 0 16px 0; color: var(--muted); font-size: 0.88rem; }
+    .login-card-header {
+      background: var(--header-bg);
+      padding: 10px 14px;
+      border-bottom: 1px solid #162840;
+    }
+
+    .login-card-header h2 {
+      margin: 0;
+      font-size: 13px;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
+    }
+
+    .login-card-body {
+      padding: 16px;
+    }
+
+    .login-card p {
+      margin: 0 0 12px 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 12px;
+      gap: 4px;
+      margin-bottom: 10px;
     }
 
     .form-group label {
-      font-size: 0.83rem;
-      color: var(--muted);
+      font-size: 11px;
+      font-weight: bold;
+      color: #2c3e50;
     }
 
     .alert-err {
       display: none;
-      margin-bottom: 12px;
-      padding: 9px 11px;
-      border-radius: 8px;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.45);
-      color: #fca5a5;
-      font-size: 0.86rem;
+      margin-bottom: 10px;
+      padding: 7px 9px;
+      border-radius: 4px;
+      background: #ffe5e5;
+      border: 1px solid #c53030;
+      color: #9b1c1c;
+      font-size: 11px;
     }
 
-    /* MODAL */
+    /* MODALE */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.72);
+      background: rgba(12, 26, 48, 0.52);
       display: none;
       align-items: center;
       justify-content: center;
@@ -339,75 +500,88 @@
 
     .modal-card {
       width: 100%;
-      max-width: 460px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      max-width: 440px;
+      background: linear-gradient(180deg, #ffffff 0%, #e7eff8 100%);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: var(--header-bg);
+      padding: 8px 12px;
+      border-bottom: 1px solid #162840;
     }
 
     .modal-title {
       margin: 0;
-      font-size: 1.15rem;
-      color: var(--accent);
+      font-size: 12px;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
+    }
+
+    .modal-body {
+      padding: 14px;
     }
 
     .modal-sub {
-      margin: 4px 0 14px 0;
-      font-size: 0.86rem;
+      margin: 0 0 12px 0;
+      font-size: 11px;
       color: var(--muted);
     }
 
     .modal-footer {
       display: flex;
       justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px;
+      gap: 6px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid #cdd9e6;
     }
 
-    /* FOOTER HTML */
+    /* FOOTER */
     .site-footer {
       flex-shrink: 0;
-      border-top: 1px solid var(--border);
-      background: var(--panel-3);
-      padding: 16px 20px;
-      margin-top: 24px;
+      background: linear-gradient(180deg, #2a4d78 0%, #1d3554 100%);
+      border-top: 1px solid var(--border-dark);
+      padding: 12px 16px;
+      margin-top: 18px;
+      color: #d4e4f7;
     }
 
     .footer-inner {
-      max-width: 1380px;
+      max-width: 1340px;
       margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 14px;
-      font-size: 0.82rem;
-      color: var(--muted);
+      gap: 12px;
+      font-size: 11px;
     }
 
     .footer-brand {
-      color: var(--text);
-      font-weight: 600;
-      font-size: 0.88rem;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 12px;
     }
 
     .footer-brand sup {
-      font-size: 0.62rem;
-      color: var(--accent);
-      margin-left: 1px;
+      font-size: 8px;
+      color: #93c5fd;
     }
 
     .footer-notice {
-      max-width: 720px;
-      line-height: 1.45;
-      margin-top: 4px;
+      max-width: 740px;
+      line-height: 1.4;
+      margin-top: 3px;
+      color: #b4ccf0;
     }
 
     .footer-right {
       text-align: right;
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     .hidden { display: none !important; }
@@ -417,108 +591,134 @@
   <div class="wrap">
     <!-- ECRAN AUTENTIFICARE -->
     <div id="loginView" class="login-card">
-      <h2>Ecotrans STCM — Fleet Management</h2>
+      <div class="login-card-header">
+        <h2>Ecotrans STCM — Fleet Management</h2>
+      </div>
+      <div class="login-card-body">
+        <p>Autentificați-vă pentru a accesa consola de dispecerat.</p>
+        <div id="loginErr" class="alert-err"></div>
 
-      <div id="loginErr" class="alert-err"></div>
-
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="loginEmail">Email</label>
-          <input id="loginEmail" type="email" required autocomplete="username" />
-        </div>
-        <div class="form-group">
-          <label for="loginPass">Parolă</label>
-          <input id="loginPass" type="password" required autocomplete="current-password" />
-        </div>
-        <button id="loginSubmit" type="submit" class="btn-primary" style="width: 100%;">Log in</button>
-      </form>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="loginPass">Parolă</label>
+            <input id="loginPass" type="password" required autocomplete="current-password" />
+          </div>
+          <button id="loginSubmit" type="submit" class="btn-primary" style="width: 100%; margin-top: 4px;">Autentificare</button>
+        </form>
+      </div>
     </div>
 
     <!-- INTERFAȚA PRINCIPALĂ -->
     <div id="mainView" class="hidden">
-      <div class="header-bar">
-        <div class="brand">
-          <h1>Ecotrans STCM — Fleet Management</h1>
-          <div id="sessionMeta" class="sub">Dispecerat flotă • Firebase Realtime Database</div>
-        </div>
-
-        <div class="top-actions">
-          <div class="field-inline">
-            <label for="scheduleTypeSelect">Tip program:</label>
-            <select id="scheduleTypeSelect">
-              <option value="Zile lucrătoare">Zile lucrătoare</option>
-              <option value="Sâmbătă-Duminică">Sâmbătă-Duminică</option>
-            </select>
+      <div class="desktop-frame">
+        <div class="title-bar">
+          <div class="brand">
+            <h1>Ecotrans STCM — Fleet Management</h1>
+            <div id="sessionMeta" class="sub">Dispecerat flotă • Firebase Realtime Database</div>
           </div>
-          <span class="sync-badge">
-            <span id="syncDot" class="dot"></span>
-            <span id="syncLabel">Conectare...</span>
-          </span>
-          <button id="btnAddVehicle" type="button" class="btn-primary">+ Vehicul nou</button>
-          <button id="btnExportPdf" type="button">Export Repartizare (.pdf)</button>
-          <button id="btnResetFleet" type="button" class="btn-danger">Reset flotă</button>
-          <button id="btnLogout" type="button">Log out</button>
-        </div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="k">Total vehicule</div>
-          <div id="statTotal" class="v">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="k">În traseu</div>
-          <div id="statTraseu" class="v">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="k">La depou</div>
-          <div id="statDepou" class="v">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="k">Rezervă / Defect</div>
-          <div id="statAltele" class="v">0</div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="filter-row">
-          <div class="filter-left">
-            <input id="searchBox" type="search" placeholder="Caută parc, model, linie, tur, șofer..." style="min-width: 250px;" />
-            <select id="filterLine">
-              <option value="ALL">Toate liniile</option>
-              <option value="N/A">N/A (Depou)</option>
-              <option value="435">Linia 435</option>
-              <option value="470">Linia 470</option>
-              <option value="701">Linia 701</option>
-            </select>
-            <select id="filterStatus">
-              <option value="ALL">Toate statusurile</option>
-              <option value="La depou">La depou</option>
-              <option value="În traseu">În traseu</option>
-              <option value="Rezervă">Rezervă</option>
-              <option value="Defect / Revizie">Defect / Revizie</option>
-            </select>
-          </div>
-          <div class="filter-right">
-            <button id="btnReload" type="button">Sincronizează acum</button>
+          <div class="toolbar-group">
+            <button id="btnLogout" type="button">Deconectare</button>
           </div>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 130px;">PARC / NR.</th>
-                <th style="width: 185px;">MODEL</th>
-                <th style="width: 85px;">LINIA</th>
-                <th style="width: 85px;">TURUL</th>
-                <th style="width: 135px;">STATUS</th>
-                <th>ȘOFERI (SCHIMB 1 / SCHIMB 2)</th>
-                <th style="width: 235px;">ACȚIUNI</th>
-              </tr>
-            </thead>
-            <tbody id="fleetRows"></tbody>
-          </table>
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div class="field-inline">
+              <label for="scheduleTypeSelect">Tip program:</label>
+              <select id="scheduleTypeSelect">
+                <option value="Zile lucrătoare">Zile lucrătoare</option>
+                <option value="Sâmbătă-Duminică">Sâmbătă-Duminică</option>
+              </select>
+            </div>
+            <button id="btnExportPdf" type="button" class="btn-primary">Export repartizare (.pdf)</button>
+            <button id="btnVectorMap" type="button">Hartă vectorială</button>
+          </div>
+        </div>
+
+        <div class="workspace">
+          <!-- TAB-URI RAPIDE DE STATUS -->
+          <div class="quick-tabs" role="tablist">
+            <button type="button" class="tab-btn active" data-tab-status="ALL">
+              Toate <span id="countAll" class="tab-count">0</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab-status="În traseu">
+              În traseu <span id="countTraseu" class="tab-count">0</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab-status="Garaj">
+              Garaj <span id="countDepou" class="tab-count">0</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab-status="Rezervă">
+              Rezervă <span id="countRezerva" class="tab-count">0</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab-status="Defect / Revizie">
+              Defect / Revizie <span id="countDefect" class="tab-count">0</span>
+            </button>
+          </div>
+
+          <!-- BARĂ INSPECTOR VEHICUL SELECTAT -->
+          <div id="inspectorStrip" class="inspector-strip">
+            <div class="inspector-info">
+              <span class="inspector-tag">SELECȚIE</span>
+              <span id="inspectorSummary" class="muted-text">Click pe un rând pentru acțiuni rapide.</span>
+            </div>
+            <div class="row-actions">
+              <button id="inspLineBtn" type="button" class="btn-sm" disabled>Schimbă linia</button>
+              <button id="inspDetailBtn" type="button" class="btn-sm" disabled>Vizualizare detaliată</button>
+              <button id="inspTourStatusBtn" type="button" class="btn-sm" disabled>Tur / Status</button>
+              <button id="inspDriverBtn" type="button" class="btn-sm" disabled>Repartizează șofer</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="filter-row">
+              <div class="filter-left">
+                <input id="searchBox" type="search" placeholder="Caută parc, model, linie, tur, șofer..." style="min-width: 245px;" />
+                <select id="filterLine">
+                  <option value="ALL">Toate liniile</option>
+                  <option value="N/A">N/A (Garaj)</option>
+                  <option value="435">Linia 435</option>
+                  <option value="470">Linia 470</option>
+                  <option value="701">Linia 701</option>
+                </select>
+                <select id="filterStatus">
+                  <option value="ALL">Toate statusurile</option>
+                  <option value="Garaj">Garaj</option>
+                  <option value="În traseu">În traseu</option>
+                  <option value="Rezervă">Rezervă</option>
+                  <option value="Defect / Revizie">Defect / Revizie</option>
+                </select>
+              </div>
+              <div class="filter-right">
+                <button id="btnClearFilters" type="button" class="btn-sm">Resetează filtrele</button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 125px;">PARC / NR.</th>
+                    <th style="width: 175px;">MODEL</th>
+                    <th style="width: 75px;">LINIA</th>
+                    <th style="width: 75px;">TURUL</th>
+                    <th style="width: 125px;">STATUS</th>
+                    <th>ȘOFERI (SCHIMB 1 / SCHIMB 2)</th>
+                    <th style="width: 240px;">ACȚIUNI</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <div id="statusBarLeft">Flotă încărcată: 0 vehicule</div>
+          <div id="statusBarRight">Program: Zile lucrătoare</div>
         </div>
       </div>
     </div>
@@ -543,22 +743,26 @@
   <!-- MODAL: SCHIMBĂ LINIA -->
   <div id="lineModal" class="modal-backdrop">
     <div class="modal-card">
-      <h3 id="lineModalTitle" class="modal-title">Schimbă linia</h3>
-      <p id="lineModalSub" class="modal-sub"></p>
-
-      <div class="form-group">
-        <label for="lineSelect">Alege linia:</label>
-        <select id="lineSelect">
-          <option value="N/A">N/A (Fără linie / Depou)</option>
-          <option value="435">435</option>
-          <option value="470">470</option>
-          <option value="701">701</option>
-        </select>
+      <div class="modal-header">
+        <h3 id="lineModalTitle" class="modal-title">Schimbă linia</h3>
       </div>
+      <div class="modal-body">
+        <p id="lineModalSub" class="modal-sub"></p>
 
-      <div class="modal-footer">
-        <button id="lineCancelBtn" type="button">Anulează</button>
-        <button id="lineSaveBtn" type="button" class="btn-primary">Salvează linia</button>
+        <div class="form-group">
+          <label for="lineSelect">Alege linia:</label>
+          <select id="lineSelect">
+            <option value="N/A">N/A (Fără linie / Garaj)</option>
+            <option value="435">435</option>
+            <option value="470">470</option>
+            <option value="701">701</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button id="lineCancelBtn" type="button">Anulează</button>
+          <button id="lineSaveBtn" type="button" class="btn-primary">Salvează linia</button>
+        </div>
       </div>
     </div>
   </div>
@@ -566,27 +770,31 @@
   <!-- MODAL: SCHIMBĂ TURUL & STATUSUL -->
   <div id="tourStatusModal" class="modal-backdrop">
     <div class="modal-card">
-      <h3 id="tsModalTitle" class="modal-title">Tur &amp; Status</h3>
-      <p id="tsModalSub" class="modal-sub"></p>
-
-      <div class="form-group">
-        <label for="tourSelect">Turul:</label>
-        <select id="tourSelect"></select>
+      <div class="modal-header">
+        <h3 id="tsModalTitle" class="modal-title">Tur &amp; Status</h3>
       </div>
+      <div class="modal-body">
+        <p id="tsModalSub" class="modal-sub"></p>
 
-      <div class="form-group">
-        <label for="statusSelect">Status vehicul:</label>
-        <select id="statusSelect">
-          <option value="La depou">La depou</option>
-          <option value="În traseu">În traseu</option>
-          <option value="Rezervă">Rezervă</option>
-          <option value="Defect / Revizie">Defect / Revizie</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="tourSelect">Turul:</label>
+          <select id="tourSelect"></select>
+        </div>
 
-      <div class="modal-footer">
-        <button id="tsCancelBtn" type="button">Anulează</button>
-        <button id="tsSaveBtn" type="button" class="btn-primary">Salvează</button>
+        <div class="form-group">
+          <label for="statusSelect">Status vehicul:</label>
+          <select id="statusSelect">
+            <option value="Garaj">Garaj</option>
+            <option value="În traseu">În traseu</option>
+            <option value="Rezervă">Rezervă</option>
+            <option value="Defect / Revizie">Defect / Revizie</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button id="tsCancelBtn" type="button">Anulează</button>
+          <button id="tsSaveBtn" type="button" class="btn-primary">Salvează</button>
+        </div>
       </div>
     </div>
   </div>
@@ -594,54 +802,27 @@
   <!-- MODAL: REPARTIZEAZĂ ȘOFERI (SCHIMB 1 & SCHIMB 2) -->
   <div id="driverModal" class="modal-backdrop">
     <div class="modal-card">
-      <h3 id="driverModalTitle" class="modal-title">Repartizează șoferi</h3>
-      <p id="driverModalSub" class="modal-sub"></p>
-
-      <div class="form-group">
-        <label for="driverShift1Select">Șofer schimb 1:</label>
-        <select id="driverShift1Select"></select>
+      <div class="modal-header">
+        <h3 id="driverModalTitle" class="modal-title">Repartizează șoferi</h3>
       </div>
+      <div class="modal-body">
+        <p id="driverModalSub" class="modal-sub"></p>
 
-      <div class="form-group">
-        <label for="driverShift2Select">Șofer schimb 2:</label>
-        <select id="driverShift2Select"></select>
-      </div>
+        <div class="form-group">
+          <label for="driverShift1Select">Șofer schimb 1:</label>
+          <select id="driverShift1Select"></select>
+        </div>
 
-      <div class="modal-footer">
-        <button id="driverClearBtn" type="button" class="btn-danger">Nerepartizat</button>
-        <button id="driverCancelBtn" type="button">Anulează</button>
-        <button id="driverSaveBtn" type="button" class="btn-primary">Salvează șoferii</button>
-      </div>
-    </div>
-  </div>
+        <div class="form-group">
+          <label for="driverShift2Select">Șofer schimb 2:</label>
+          <select id="driverShift2Select"></select>
+        </div>
 
-  <!-- MODAL: VEHICUL NOU -->
-  <div id="addVehicleModal" class="modal-backdrop">
-    <div class="modal-card">
-      <h3 class="modal-title">Adaugă vehicul nou</h3>
-      <p class="modal-sub">Se adaugă direct în flota sincronizată în cloud.</p>
-
-      <div class="form-group">
-        <label for="addParcInput">Nr. parc / număr înmatriculare</label>
-        <input id="addParcInput" type="text" placeholder="Ex: IF 61 PCH" />
-      </div>
-      <div class="form-group">
-        <label for="addModelInput">Model vehicul</label>
-        <input id="addModelInput" type="text" placeholder="Ex: Karsan e-ATA 10" />
-      </div>
-      <div class="form-group">
-        <label for="addLineSelect">Linia inițială</label>
-        <select id="addLineSelect">
-          <option value="N/A">N/A (Depou)</option>
-          <option value="435">435</option>
-          <option value="470">470</option>
-          <option value="701">701</option>
-        </select>
-      </div>
-
-      <div class="modal-footer">
-        <button id="addCancelBtn" type="button">Anulează</button>
-        <button id="addSaveBtn" type="button" class="btn-primary">Adaugă</button>
+        <div class="modal-footer">
+          <button id="driverClearBtn" type="button" class="btn-danger">Nerepartizat</button>
+          <button id="driverCancelBtn" type="button">Anulează</button>
+          <button id="driverSaveBtn" type="button" class="btn-primary">Salvează șoferii</button>
+        </div>
       </div>
     </div>
   </div>
@@ -702,27 +883,27 @@
     ];
 
     const DEFAULT_FLEET = [
-      { id: "IF 49 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 1 },
-      { id: "IF 56 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 2 },
-      { id: "IF 57 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 3 },
-      { id: "IF 58 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 4 },
-      { id: "IF 25 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 5 },
-      { id: "IF 38 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 6 },
-      { id: "IF 39 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 7 },
-      { id: "IF 40 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 8 },
-      { id: "IF 42 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 9 },
-      { id: "IF 49 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 10 },
-      { id: "IF 50 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 11 },
-      { id: "IF 51 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 12 },
-      { id: "IF 52 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 13 },
-      { id: "IF 53 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 14 },
-      { id: "IF 54 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 15 },
-      { id: "IF 55 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 16 },
-      { id: "IF 56 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 17 },
-      { id: "IF 57 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 18 },
-      { id: "IF 58 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 19 },
-      { id: "IF 59 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 20 },
-      { id: "IF 60 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "La depou", driver1: "", driver2: "", sort_order: 21 }
+      { id: "IF 49 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 1 },
+      { id: "IF 56 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 2 },
+      { id: "IF 57 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 3 },
+      { id: "IF 58 TCM", model: "Isuzu Citiport 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 4 },
+      { id: "IF 25 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 5 },
+      { id: "IF 38 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 6 },
+      { id: "IF 39 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 7 },
+      { id: "IF 40 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 8 },
+      { id: "IF 42 PCH", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 9 },
+      { id: "IF 49 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 10 },
+      { id: "IF 50 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 11 },
+      { id: "IF 51 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 12 },
+      { id: "IF 52 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 13 },
+      { id: "IF 53 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 14 },
+      { id: "IF 54 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 15 },
+      { id: "IF 55 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 16 },
+      { id: "IF 56 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 17 },
+      { id: "IF 57 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 18 },
+      { id: "IF 58 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 19 },
+      { id: "IF 59 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 20 },
+      { id: "IF 60 PCH", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 21 }
     ];
 
     const app = initializeApp(firebaseConfig);
@@ -734,6 +915,7 @@
     let fleet = [];
     let scheduleType = "Zile lucrătoare";
     let activeVehicleId = null;
+    let selectedRowId = null;
     let unsubFleet = null;
     let unsubSchedule = null;
 
@@ -746,18 +928,27 @@
     const loginErr = document.getElementById("loginErr");
     const sessionMeta = document.getElementById("sessionMeta");
     const scheduleTypeSelect = document.getElementById("scheduleTypeSelect");
-    const syncDot = document.getElementById("syncDot");
-    const syncLabel = document.getElementById("syncLabel");
 
     const fleetRows = document.getElementById("fleetRows");
     const searchBox = document.getElementById("searchBox");
     const filterLine = document.getElementById("filterLine");
     const filterStatus = document.getElementById("filterStatus");
+    const btnClearFilters = document.getElementById("btnClearFilters");
 
-    const statTotal = document.getElementById("statTotal");
-    const statTraseu = document.getElementById("statTraseu");
-    const statDepou = document.getElementById("statDepou");
-    const statAltele = document.getElementById("statAltele");
+    const countAll = document.getElementById("countAll");
+    const countTraseu = document.getElementById("countTraseu");
+    const countDepou = document.getElementById("countDepou");
+    const countRezerva = document.getElementById("countRezerva");
+    const countDefect = document.getElementById("countDefect");
+
+    const inspectorSummary = document.getElementById("inspectorSummary");
+    const inspLineBtn = document.getElementById("inspLineBtn");
+    const inspDetailBtn = document.getElementById("inspDetailBtn");
+    const inspTourStatusBtn = document.getElementById("inspTourStatusBtn");
+    const inspDriverBtn = document.getElementById("inspDriverBtn");
+
+    const statusBarLeft = document.getElementById("statusBarLeft");
+    const statusBarRight = document.getElementById("statusBarRight");
 
     // Modale
     const lineModal = document.getElementById("lineModal");
@@ -784,13 +975,6 @@
     const driverCancelBtn = document.getElementById("driverCancelBtn");
     const driverSaveBtn = document.getElementById("driverSaveBtn");
 
-    const addVehicleModal = document.getElementById("addVehicleModal");
-    const addParcInput = document.getElementById("addParcInput");
-    const addModelInput = document.getElementById("addModelInput");
-    const addLineSelect = document.getElementById("addLineSelect");
-    const addCancelBtn = document.getElementById("addCancelBtn");
-    const addSaveBtn = document.getElementById("addSaveBtn");
-
     // Elimină diacriticele pentru textul din PDF
     function stripDiacritics(str) {
       return String(str ?? "")
@@ -806,13 +990,6 @@
         .replace(/Â/g, "A")
         .replace(/î/g, "i")
         .replace(/Î/g, "I");
-    }
-
-    function setSyncStatus(mode, text) {
-      syncDot.className = "dot";
-      if (mode === "ok") syncDot.classList.add("ok");
-      if (mode === "err") syncDot.classList.add("err");
-      syncLabel.textContent = text;
     }
 
     function escapeHtml(s) {
@@ -839,7 +1016,7 @@
             model: String(u.model || "").trim(),
             line: line,
             tour: String(u.tour || "").trim(),
-            status: String(u.status || "La depou").trim(),
+            status: String(u.status || "Garaj").trim(),
             driver1: d1,
             driver2: d2,
             sort_order: Number.isFinite(Number(u.sort_order)) ? Number(u.sort_order) : idx + 1
@@ -849,27 +1026,21 @@
     }
 
     async function persistFleet(nextFleet) {
-      setSyncStatus("", "Se salvează...");
       try {
         await auth.authStateReady();
         const ordered = nextFleet.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
         await set(fleetRef, ordered);
-        setSyncStatus("ok", "Salvat în cloud");
       } catch (err) {
         console.error(err);
-        setSyncStatus("err", "Eroare salvare");
       }
     }
 
     async function persistScheduleType(type) {
-      setSyncStatus("", "Se salvează programul...");
       try {
         await auth.authStateReady();
         await set(scheduleTypeRef, type);
-        setSyncStatus("ok", "Salvat în cloud");
       } catch (err) {
         console.error(err);
-        setSyncStatus("err", "Eroare salvare program");
       }
     }
 
@@ -895,17 +1066,51 @@
       return `Schimb 1: ${s1} | Schimb 2: ${s2}`;
     }
 
-    function refreshStats() {
-      statTotal.textContent = String(fleet.length);
-      statTraseu.textContent = String(fleet.filter((u) => u.status === "În traseu").length);
-      statDepou.textContent = String(fleet.filter((u) => u.status === "La depou").length);
-      statAltele.textContent = String(
-        fleet.filter((u) => u.status === "Rezervă" || u.status === "Defect / Revizie").length
-      );
+    function syncTabActiveState() {
+      const current = filterStatus.value;
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.tabStatus === current);
+      });
+    }
+
+    function refreshInspector() {
+      const unit = fleet.find((u) => u.id === selectedRowId) || null;
+      const enabled = Boolean(unit);
+      inspLineBtn.disabled = !enabled;
+      inspDetailBtn.disabled = !enabled;
+      inspTourStatusBtn.disabled = !enabled;
+      inspDriverBtn.disabled = !enabled;
+
+      if (!unit) {
+        inspectorSummary.className = "muted-text";
+        inspectorSummary.textContent = "Click pe un rând pentru acțiuni rapide.";
+        return;
+      }
+
+      const d1 = unit.driver1 || "Nerepartizat";
+      const d2 = unit.driver2 || "Nerepartizat";
+      inspectorSummary.className = "";
+      inspectorSummary.innerHTML =
+        `<strong>${escapeHtml(unit.id)}</strong> (${escapeHtml(unit.model)}) • ` +
+        `Linia: <strong>${escapeHtml(unit.line || "N/A")}</strong> • ` +
+        `Tur: <strong>${escapeHtml(unit.tour || "—")}</strong> • ` +
+        `Status: <strong>${escapeHtml(unit.status)}</strong> • ` +
+        `S1/S2: <strong>${escapeHtml(d1)}</strong> / <strong>${escapeHtml(d2)}</strong>`;
+    }
+
+    function refreshCountsAndStatusBar(visibleCount) {
+      countAll.textContent = String(fleet.length);
+      countTraseu.textContent = String(fleet.filter((u) => u.status === "În traseu").length);
+      countDepou.textContent = String(fleet.filter((u) => u.status === "Garaj").length);
+      countRezerva.textContent = String(fleet.filter((u) => u.status === "Rezervă").length);
+      countDefect.textContent = String(fleet.filter((u) => u.status === "Defect / Revizie").length);
+
+      statusBarLeft.textContent = `Afișate: ${visibleCount} din ${fleet.length} vehicule`;
+      statusBarRight.textContent = `Program: ${scheduleType}`;
     }
 
     function renderFleet() {
-      refreshStats();
+      syncTabActiveState();
 
       const q = searchBox.value.trim().toLowerCase();
       const lf = filterLine.value;
@@ -925,10 +1130,21 @@
         return okLine && okStatus && okQuery;
       });
 
+      refreshCountsAndStatusBar(list.length);
+      refreshInspector();
+
       fleetRows.innerHTML = "";
 
       for (const u of list) {
         const tr = document.createElement("tr");
+        if (u.id === selectedRowId) {
+          tr.classList.add("selected");
+        }
+        tr.addEventListener("click", (e) => {
+          if (e.target.closest("button")) return;
+          selectedRowId = u.id;
+          renderFleet();
+        });
 
         const tdParc = document.createElement("td");
         tdParc.innerHTML = `<strong>${escapeHtml(u.id)}</strong>`;
@@ -958,19 +1174,28 @@
         btnLine.type = "button";
         btnLine.className = "btn-sm";
         btnLine.textContent = "Schimbă linia";
-        btnLine.addEventListener("click", () => openLineModal(u));
+        btnLine.addEventListener("click", () => {
+          selectedRowId = u.id;
+          openLineModal(u);
+        });
 
         const btnTourStatus = document.createElement("button");
         btnTourStatus.type = "button";
         btnTourStatus.className = "btn-sm";
         btnTourStatus.textContent = "Tur / Status";
-        btnTourStatus.addEventListener("click", () => openTourStatusModal(u));
+        btnTourStatus.addEventListener("click", () => {
+          selectedRowId = u.id;
+          openTourStatusModal(u);
+        });
 
         const btnDriver = document.createElement("button");
         btnDriver.type = "button";
         btnDriver.className = "btn-sm";
         btnDriver.textContent = "Repartizează șofer";
-        btnDriver.addEventListener("click", () => openDriverModal(u));
+        btnDriver.addEventListener("click", () => {
+          selectedRowId = u.id;
+          openDriverModal(u);
+        });
 
         actBox.append(btnLine, btnTourStatus, btnDriver);
         tdAct.appendChild(actBox);
@@ -979,6 +1204,37 @@
         fleetRows.appendChild(tr);
       }
     }
+
+    // Butoane inspector
+    inspLineBtn.addEventListener("click", () => {
+      const unit = fleet.find((u) => u.id === selectedRowId);
+      if (unit) openLineModal(unit);
+    });
+
+    inspTourStatusBtn.addEventListener("click", () => {
+      const unit = fleet.find((u) => u.id === selectedRowId);
+      if (unit) openTourStatusModal(unit);
+    });
+
+    inspDriverBtn.addEventListener("click", () => {
+      const unit = fleet.find((u) => u.id === selectedRowId);
+      if (unit) openDriverModal(unit);
+    });
+
+    // Tab-uri status
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterStatus.value = btn.dataset.tabStatus;
+        renderFleet();
+      });
+    });
+
+    btnClearFilters.addEventListener("click", () => {
+      searchBox.value = "";
+      filterLine.value = "ALL";
+      filterStatus.value = "ALL";
+      renderFleet();
+    });
 
     function openLineModal(unit) {
       activeVehicleId = unit.id;
@@ -998,7 +1254,7 @@
         if (u.id !== activeVehicleId) return u;
         const validTours = TOURS_BY_LINE[chosenLine] || [""];
         const nextTour = validTours.includes(u.tour) ? u.tour : "";
-        const nextStatus = chosenLine === "N/A" && u.status === "În traseu" ? "La depou" : u.status;
+        const nextStatus = chosenLine === "N/A" && u.status === "În traseu" ? "Garaj" : u.status;
         return { ...u, line: chosenLine, tour: nextTour, status: nextStatus };
       });
 
@@ -1022,7 +1278,7 @@
         .join("");
 
       tourSelect.value = validTours.includes(unit.tour) ? unit.tour : "";
-      statusSelect.value = unit.status || "La depou";
+      statusSelect.value = unit.status || "Garaj";
       tourStatusModal.classList.add("open");
     }
 
@@ -1090,47 +1346,10 @@
       await persistFleet(fleet);
     });
 
-    document.getElementById("btnAddVehicle").addEventListener("click", () => {
-      addParcInput.value = "";
-      addModelInput.value = "";
-      addLineSelect.value = "N/A";
-      addVehicleModal.classList.add("open");
-      addParcInput.focus();
-    });
-
-    addCancelBtn.addEventListener("click", () => addVehicleModal.classList.remove("open"));
-
-    addSaveBtn.addEventListener("click", async () => {
-      const id = addParcInput.value.trim();
-      const model = addModelInput.value.trim();
-      const line = addLineSelect.value;
-      if (!id || !model) {
-        alert("Completează numărul de parc și modelul.");
-        return;
-      }
-      if (fleet.some((u) => u.id.toLowerCase() === id.toLowerCase())) {
-        alert("Există deja un vehicul cu acest număr de parc.");
-        return;
-      }
-      fleet = [
-        ...fleet,
-        { id, model, line, tour: "", status: "La depou", driver1: "", driver2: "", sort_order: fleet.length + 1 }
-      ];
-      addVehicleModal.classList.remove("open");
-      renderFleet();
-      await persistFleet(fleet);
-    });
-
     scheduleTypeSelect.addEventListener("change", async () => {
       scheduleType = scheduleTypeSelect.value;
+      statusBarRight.textContent = `Program: ${scheduleType}`;
       await persistScheduleType(scheduleType);
-    });
-
-    document.getElementById("btnResetFleet").addEventListener("click", async () => {
-      if (!confirm("Resetezi flota la cele 21 de vehicule implicite în cloud?")) return;
-      fleet = DEFAULT_FLEET.map((u) => ({ ...u }));
-      renderFleet();
-      await persistFleet(fleet);
     });
 
     // EXPORT REPARTIZARE PDF (fara diacritice, spatiere curata, schimburi 1 si 2)
@@ -1226,25 +1445,6 @@
       doc.save(`Repartizare_STCM_${now.toISOString().slice(0, 10)}.pdf`);
     });
 
-    document.getElementById("btnReload").addEventListener("click", async () => {
-      setSyncStatus("", "Sincronizare...");
-      try {
-        await auth.authStateReady();
-        const snapFleet = await get(fleetRef);
-        fleet = normalizeFleet(snapFleet.val());
-        const snapSched = await get(scheduleTypeRef);
-        if (snapSched.exists()) {
-          scheduleType = snapSched.val();
-          scheduleTypeSelect.value = scheduleType;
-        }
-        renderFleet();
-        setSyncStatus("ok", "Salvat în cloud");
-      } catch (err) {
-        console.error(err);
-        setSyncStatus("err", "Eroare sincronizare");
-      }
-    });
-
     searchBox.addEventListener("input", renderFleet);
     filterLine.addEventListener("change", renderFleet);
     filterStatus.addEventListener("change", renderFleet);
@@ -1259,11 +1459,11 @@
         await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPass.value);
       } catch (err) {
         console.error(err);
-        loginErr.textContent = "Autentificare eșuată. Verifică emailul și parola din Firebase Authentication.";
+        loginErr.textContent = "Autentificare eșuată. Emailul și/sau parola sunt incorecte.";
         loginErr.style.display = "block";
       } finally {
         loginSubmit.disabled = false;
-        loginSubmit.textContent = "Log in";
+        loginSubmit.textContent = "Autentificare";
       }
     });
 
@@ -1285,7 +1485,6 @@
       loginView.classList.add("hidden");
       mainView.classList.remove("hidden");
       sessionMeta.textContent = `Conectat: ${user.email} • Sincronizare cloud Firebase Realtime Database`;
-      setSyncStatus("", "Se încarcă datele...");
 
       try {
         await auth.authStateReady();
@@ -1305,10 +1504,8 @@
           fleet = normalizeFleet(snapFleet.val());
         }
         renderFleet();
-        setSyncStatus("ok", "Salvat în cloud");
       } catch (err) {
         console.error(err);
-        setSyncStatus("err", "Eroare permisiuni");
       }
 
       if (unsubFleet) unsubFleet();
@@ -1318,12 +1515,10 @@
           if (snapshot.exists()) {
             fleet = normalizeFleet(snapshot.val());
             renderFleet();
-            setSyncStatus("ok", "Salvat în cloud");
           }
         },
         (err) => {
           console.error(err);
-          setSyncStatus("err", "Eroare sincronizare");
         }
       );
 
@@ -1334,6 +1529,7 @@
           if (snapshot.exists()) {
             scheduleType = snapshot.val();
             scheduleTypeSelect.value = scheduleType;
+            statusBarRight.textContent = `Program: ${scheduleType}`;
           }
         },
         (err) => {
