@@ -202,6 +202,27 @@
       font-size: 0.82rem;
     }
 
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warn);
+    }
+    .dot.ok { background: var(--ok); }
+    .dot.err { background: var(--bad); }
+
     .table-wrap {
       overflow-x: auto;
     }
@@ -429,7 +450,13 @@
               <option value="Sâmbătă-Duminică">Sâmbătă-Duminică</option>
             </select>
           </div>
+          <span class="sync-badge">
+            <span id="syncDot" class="dot"></span>
+            <span id="syncLabel">Conectare...</span>
+          </span>
+          <button id="btnAddVehicle" type="button" class="btn-primary">+ Vehicul nou</button>
           <button id="btnExportPdf" type="button">Export Repartizare (.pdf)</button>
+          <button id="btnResetFleet" type="button" class="btn-danger">Reset flotă</button>
           <button id="btnLogout" type="button">Log out</button>
         </div>
       </div>
@@ -471,6 +498,9 @@
               <option value="Rezervă">Rezervă</option>
               <option value="Defect / Revizie">Defect / Revizie</option>
             </select>
+          </div>
+          <div class="filter-right">
+            <button id="btnReload" type="button">Sincronizează acum</button>
           </div>
         </div>
 
@@ -585,6 +615,37 @@
     </div>
   </div>
 
+  <!-- MODAL: VEHICUL NOU -->
+  <div id="addVehicleModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 class="modal-title">Adaugă vehicul nou</h3>
+      <p class="modal-sub">Se adaugă direct în flota sincronizată în cloud.</p>
+
+      <div class="form-group">
+        <label for="addParcInput">Nr. parc / număr înmatriculare</label>
+        <input id="addParcInput" type="text" placeholder="Ex: IF 61 PCH" />
+      </div>
+      <div class="form-group">
+        <label for="addModelInput">Model vehicul</label>
+        <input id="addModelInput" type="text" placeholder="Ex: Karsan e-ATA 10" />
+      </div>
+      <div class="form-group">
+        <label for="addLineSelect">Linia inițială</label>
+        <select id="addLineSelect">
+          <option value="N/A">N/A (Depou)</option>
+          <option value="435">435</option>
+          <option value="470">470</option>
+          <option value="701">701</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button id="addCancelBtn" type="button">Anulează</button>
+        <button id="addSaveBtn" type="button" class="btn-primary">Adaugă</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import {
@@ -685,6 +746,8 @@
     const loginErr = document.getElementById("loginErr");
     const sessionMeta = document.getElementById("sessionMeta");
     const scheduleTypeSelect = document.getElementById("scheduleTypeSelect");
+    const syncDot = document.getElementById("syncDot");
+    const syncLabel = document.getElementById("syncLabel");
 
     const fleetRows = document.getElementById("fleetRows");
     const searchBox = document.getElementById("searchBox");
@@ -721,6 +784,13 @@
     const driverCancelBtn = document.getElementById("driverCancelBtn");
     const driverSaveBtn = document.getElementById("driverSaveBtn");
 
+    const addVehicleModal = document.getElementById("addVehicleModal");
+    const addParcInput = document.getElementById("addParcInput");
+    const addModelInput = document.getElementById("addModelInput");
+    const addLineSelect = document.getElementById("addLineSelect");
+    const addCancelBtn = document.getElementById("addCancelBtn");
+    const addSaveBtn = document.getElementById("addSaveBtn");
+
     // Elimină diacriticele pentru textul din PDF
     function stripDiacritics(str) {
       return String(str ?? "")
@@ -736,6 +806,13 @@
         .replace(/Â/g, "A")
         .replace(/î/g, "i")
         .replace(/Î/g, "I");
+    }
+
+    function setSyncStatus(mode, text) {
+      syncDot.className = "dot";
+      if (mode === "ok") syncDot.classList.add("ok");
+      if (mode === "err") syncDot.classList.add("err");
+      syncLabel.textContent = text;
     }
 
     function escapeHtml(s) {
@@ -772,21 +849,27 @@
     }
 
     async function persistFleet(nextFleet) {
+      setSyncStatus("", "Se salvează...");
       try {
         await auth.authStateReady();
         const ordered = nextFleet.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
         await set(fleetRef, ordered);
+        setSyncStatus("ok", "Salvat în cloud");
       } catch (err) {
         console.error(err);
+        setSyncStatus("err", "Eroare salvare");
       }
     }
 
     async function persistScheduleType(type) {
+      setSyncStatus("", "Se salvează programul...");
       try {
         await auth.authStateReady();
         await set(scheduleTypeRef, type);
+        setSyncStatus("ok", "Salvat în cloud");
       } catch (err) {
         console.error(err);
+        setSyncStatus("err", "Eroare salvare program");
       }
     }
 
@@ -1007,9 +1090,47 @@
       await persistFleet(fleet);
     });
 
+    document.getElementById("btnAddVehicle").addEventListener("click", () => {
+      addParcInput.value = "";
+      addModelInput.value = "";
+      addLineSelect.value = "N/A";
+      addVehicleModal.classList.add("open");
+      addParcInput.focus();
+    });
+
+    addCancelBtn.addEventListener("click", () => addVehicleModal.classList.remove("open"));
+
+    addSaveBtn.addEventListener("click", async () => {
+      const id = addParcInput.value.trim();
+      const model = addModelInput.value.trim();
+      const line = addLineSelect.value;
+      if (!id || !model) {
+        alert("Completează numărul de parc și modelul.");
+        return;
+      }
+      if (fleet.some((u) => u.id.toLowerCase() === id.toLowerCase())) {
+        alert("Există deja un vehicul cu acest număr de parc.");
+        return;
+      }
+      fleet = [
+        ...fleet,
+        { id, model, line, tour: "", status: "La depou", driver1: "", driver2: "", sort_order: fleet.length + 1 }
+      ];
+      addVehicleModal.classList.remove("open");
+      renderFleet();
+      await persistFleet(fleet);
+    });
+
     scheduleTypeSelect.addEventListener("change", async () => {
       scheduleType = scheduleTypeSelect.value;
       await persistScheduleType(scheduleType);
+    });
+
+    document.getElementById("btnResetFleet").addEventListener("click", async () => {
+      if (!confirm("Resetezi flota la cele 21 de vehicule implicite în cloud?")) return;
+      fleet = DEFAULT_FLEET.map((u) => ({ ...u }));
+      renderFleet();
+      await persistFleet(fleet);
     });
 
     // EXPORT REPARTIZARE PDF (fara diacritice, spatiere curata, schimburi 1 si 2)
@@ -1105,6 +1226,25 @@
       doc.save(`Repartizare_STCM_${now.toISOString().slice(0, 10)}.pdf`);
     });
 
+    document.getElementById("btnReload").addEventListener("click", async () => {
+      setSyncStatus("", "Sincronizare...");
+      try {
+        await auth.authStateReady();
+        const snapFleet = await get(fleetRef);
+        fleet = normalizeFleet(snapFleet.val());
+        const snapSched = await get(scheduleTypeRef);
+        if (snapSched.exists()) {
+          scheduleType = snapSched.val();
+          scheduleTypeSelect.value = scheduleType;
+        }
+        renderFleet();
+        setSyncStatus("ok", "Salvat în cloud");
+      } catch (err) {
+        console.error(err);
+        setSyncStatus("err", "Eroare sincronizare");
+      }
+    });
+
     searchBox.addEventListener("input", renderFleet);
     filterLine.addEventListener("change", renderFleet);
     filterStatus.addEventListener("change", renderFleet);
@@ -1145,6 +1285,7 @@
       loginView.classList.add("hidden");
       mainView.classList.remove("hidden");
       sessionMeta.textContent = `Conectat: ${user.email} • Sincronizare cloud Firebase Realtime Database`;
+      setSyncStatus("", "Se încarcă datele...");
 
       try {
         await auth.authStateReady();
@@ -1164,8 +1305,10 @@
           fleet = normalizeFleet(snapFleet.val());
         }
         renderFleet();
+        setSyncStatus("ok", "Salvat în cloud");
       } catch (err) {
         console.error(err);
+        setSyncStatus("err", "Eroare permisiuni");
       }
 
       if (unsubFleet) unsubFleet();
@@ -1175,10 +1318,12 @@
           if (snapshot.exists()) {
             fleet = normalizeFleet(snapshot.val());
             renderFleet();
+            setSyncStatus("ok", "Salvat în cloud");
           }
         },
         (err) => {
           console.error(err);
+          setSyncStatus("err", "Eroare sincronizare");
         }
       );
 
