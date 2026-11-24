@@ -427,7 +427,6 @@
             <line x1="6.8" y1="11.5" x2="12.2" y2="11.5" stroke="#17273b" stroke-width="1.2"/>
           </svg>
           <span class="font-bold text-[13.5px] tracking-tight">MNSys<sup class="tm-sup">TM</sup> Fleet Management</span>
-         
         </div>
 
         <div class="flex flex-wrap items-center gap-1.5 text-[12.5px]">
@@ -606,7 +605,7 @@
             >
               <span>Salvează</span>
             </button>
-            
+
             <button
               id="sendToGarageBtn"
               type="button"
@@ -615,8 +614,6 @@
               Garaj
             </button>
           </div>
-          
-
         </form>
       </section>
 
@@ -722,6 +719,7 @@
     import {
       getDatabase,
       ref,
+      get,
       onValue,
       set
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -863,7 +861,6 @@
     const blockSelect = document.getElementById("blockSelect");
     const shift1Select = document.getElementById("shift1Select");
     const shift2Select = document.getElementById("shift2Select");
-    const draftHint = document.getElementById("draftHint");
     const sendToGarageBtn = document.getElementById("sendToGarageBtn");
 
     const resetFiltersBtn = document.getElementById("resetFiltersBtn");
@@ -1246,7 +1243,24 @@
       }
     }
 
-    function attachRealtimeListener() {
+    function applySnapshotData(snapshotVal) {
+      const base = createDefaultAssignments();
+      if (snapshotVal && typeof snapshotVal === "object") {
+        for (const v of VEHICLES) {
+          if (snapshotVal[v.park]) {
+            base[v.park] = { ...base[v.park], ...snapshotVal[v.park] };
+          }
+        }
+      }
+      assignments = base;
+      saveLocalBackup(assignments);
+      loadVehicleIntoForm(activePark);
+      renderFleetTable();
+      setSyncState("green", "Sincronizat Firebase RTDB");
+      updateClockLabel();
+    }
+
+    async function attachRealtimeListener() {
       if (typeof unsubscribeAssignments === "function") {
         unsubscribeAssignments();
         unsubscribeAssignments = null;
@@ -1265,53 +1279,44 @@
         return;
       }
 
-      setSyncState("amber", "Conectare /dispatch/assignments...");
+      setSyncState("amber", "Sincronizare /dispatch/assignments...");
 
       try {
         const assignmentsRef = ref(dbInstance, DB_ASSIGNMENTS_PATH);
+
+        try {
+          const initialSnap = await get(assignmentsRef);
+          if (initialSnap.exists()) {
+            applySnapshotData(initialSnap.val());
+          }
+        } catch (initialErr) {
+          console.warn("Citirea inițială get() a eșuat:", initialErr);
+        }
+
         unsubscribeAssignments = onValue(
           assignmentsRef,
           (snapshot) => {
-            const base = createDefaultAssignments();
-            if (snapshot.exists()) {
-              const remoteVal = snapshot.val() || {};
-              for (const v of VEHICLES) {
-                if (remoteVal[v.park]) {
-                  base[v.park] = { ...base[v.park], ...remoteVal[v.park] };
-                }
-              }
-            } else {
-              const localFallback = loadLocalBackup();
-              if (localFallback) {
-                for (const v of VEHICLES) {
-                  base[v.park] = { ...base[v.park], ...localFallback[v.park] };
-                }
-              }
-            }
-            assignments = base;
-            saveLocalBackup(assignments);
-            renderFleetTable();
-            setSyncState("green", "Sincronizat Firebase RTDB");
-            updateClockLabel();
+            applySnapshotData(snapshot.exists() ? snapshot.val() : {});
           },
           (error) => {
             console.warn("Citirea /dispatch/assignments a eșuat; se folosește localStorage:", error);
             const localFallback = loadLocalBackup();
             if (localFallback) {
               assignments = localFallback;
+              loadVehicleIntoForm(activePark);
               renderFleetTable();
             }
-            setSyncState("amber", "Fallback Local");
+            setSyncState("red", "Eroare RTDB (verifică Rules)");
             updateClockLabel();
             showBanner(
-              "Firebase Realtime Database a refuzat accesul sau este offline. Salvarea continuă local (localStorage).",
-              "info"
+              `Nu s-au putut încărca datele din Firebase Realtime Database (${error?.code || "permission-denied"}). Verifică Rules în Firebase Console.`,
+              "error"
             );
           }
         );
       } catch (err) {
         console.warn("Inițializare listener RTDB eșuată:", err);
-        setSyncState("amber", "Mod Local");
+        setSyncState("red", "Eroare RTDB");
       }
     }
 
@@ -1364,7 +1369,6 @@
     });
 
     sendToGarageBtn.addEventListener("click", async () => {
-      const park = vehicleSelect.value || activePark;
       statusSelect.value = "Garaj";
       lineSelect.value = "";
       blockSelect.value = "";
@@ -1385,11 +1389,7 @@
       if (park === activePark) {
         statusSelect.value = "Garaj";
         lineSelect.value = "";
-        lineCustomInput.value = "";
-        lineCustomInput.classList.add("hidden");
-        blockSelect.value = "";
-        blockCustomInput.value = "";
-        blockCustomInput.classList.add("hidden");
+        syncBlockOptionsForLine("", "");
         shift1Select.value = "";
         shift2Select.value = "";
       }
@@ -1487,7 +1487,7 @@
     try {
       appInstance = initializeApp(firebaseConfig);
       authInstance = getAuth(appInstance);
-      dbInstance = getDatabase(appInstance);
+      dbInstance = getDatabase(appInstance, firebaseConfig.databaseURL);
 
       authInitStatus.innerHTML = `<span class="led led-green"></span><span>Firebase pregătit</span>`;
 
