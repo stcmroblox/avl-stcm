@@ -385,7 +385,7 @@
       text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
-    .pill-depou { background: linear-gradient(180deg, #e5e7eb 0%, #cbd5e1 100%); color: #334155; }
+    .pill-garaj { background: linear-gradient(180deg, #e5e7eb 0%, #cbd5e1 100%); color: #334155; }
     .pill-traseu { background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 100%); color: #14532d; }
     .pill-rezerva { background: linear-gradient(180deg, #fef08a 0%, #facc15 100%); color: #713f12; }
     .pill-defect { background: linear-gradient(180deg, #fca5a5 0%, #f87171 100%); color: #7f1d1d; }
@@ -607,7 +607,7 @@
             <label for="loginPass">Parolă</label>
             <input id="loginPass" type="password" required autocomplete="current-password" />
           </div>
-          <button id="loginSubmit" type="submit" class="btn-primary" style="width: 100%; margin-top: 4px;">Autentificare</button>
+          <button id="loginSubmit" type="submit" class="btn-primary" style="width: 100%; margin-top: 4px;">Log in</button>
         </form>
       </div>
     </div>
@@ -621,7 +621,7 @@
             <div id="sessionMeta" class="sub">Dispecerat flotă • Firebase Realtime Database</div>
           </div>
           <div class="toolbar-group">
-            <button id="btnLogout" type="button">Deconectare</button>
+            <button id="btnLogout" type="button">Log out</button>
           </div>
         </div>
 
@@ -634,8 +634,8 @@
                 <option value="Sâmbătă-Duminică">Sâmbătă-Duminică</option>
               </select>
             </div>
-            <button id="btnExportPdf" type="button" class="btn-primary">Export repartizare (.pdf)</button>
-            <button id="btnVectorMap" type="button">Hartă vectorială</button>
+            <button id="btnExportPdf" type="button" class="btn-primary">Export Repartizare (.pdf)</button>
+            <button id="btnVectorMap" type="button">harta vectoriala</button>
           </div>
         </div>
 
@@ -649,7 +649,7 @@
               În traseu <span id="countTraseu" class="tab-count">0</span>
             </button>
             <button type="button" class="tab-btn" data-tab-status="Garaj">
-              Garaj <span id="countDepou" class="tab-count">0</span>
+              Garaj <span id="countGaraj" class="tab-count">0</span>
             </button>
             <button type="button" class="tab-btn" data-tab-status="Rezervă">
               Rezervă <span id="countRezerva" class="tab-count">0</span>
@@ -667,7 +667,7 @@
             </div>
             <div class="row-actions">
               <button id="inspLineBtn" type="button" class="btn-sm" disabled>Schimbă linia</button>
-              <button id="inspDetailBtn" type="button" class="btn-sm" disabled>Vizualizare detaliată</button>
+              <button id="inspDetailBtn" type="button" class="btn-sm" disabled>Vizualizare detaliata</button>
               <button id="inspTourStatusBtn" type="button" class="btn-sm" disabled>Tur / Status</button>
               <button id="inspDriverBtn" type="button" class="btn-sm" disabled>Repartizează șofer</button>
             </div>
@@ -701,7 +701,7 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 125px;">PARC / NR.</th>
+                    <th style="width: 145px;">PARC / NR.</th>
                     <th style="width: 175px;">MODEL</th>
                     <th style="width: 75px;">LINIA</th>
                     <th style="width: 75px;">TURUL</th>
@@ -883,52 +883,51 @@
     ];
 
     const DEFAULT_FLEET = [
-  { id: "IF 24 PCH / 9524", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 1 },
-  { id: "IF 25 PCH / 9525", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 2 },
-  { id: "IF 42 PCH / 9542", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 3 },
-  { id: "IF 41 PCH / 9541", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 4 },
-  { id: "IF 38 PCH / 9538", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 5 },
-  { id: "IF 40 PCH / 9540", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 6 },
-  { id: "IF 39 PCH / 9539", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 7 },
-  { id: "IF 37 PCH / 9537", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 8 },
-  { id: "IF 35 PCH / 9535", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 9 },
-  { id: "IF 34 PCH / 9534", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 10 },
-  { id: "IF 32 PCH / 9532", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 11 },
-  { id: "IF 31 PCH / 9531", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 12 },
-  { id: "IF 36 PCH / 9536", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 13 },
-  { id: "IF 41 TCM / 9428", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 14 },
-  { id: "IF 42 TCM / 9429", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 15 },
-  { id: "IF 49 TCM / 9430", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 16 },
-  { id: "IF 56 TCM / 9437", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 17 },
-  { id: "IF 57 TCM / 9438", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 18 },
-  { id: "IF 58 TCM / 9439", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 19 },
-  { id: "IF 44 PCH / 9444", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 20 },
-  { id: "IF 45 PCH / 9445", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 21 },
-  { id: "IF 46 PCH / 9446", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 22 },
-  { id: "IF 47 PCH / 9447", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 23 },
-  { id: "IF 48 PCH / 9448", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 24 },
-  { id: "IF 49 PCH / 9449", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 25 },
-  { id: "IF 50 PCH / 9450", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 26 },
-  { id: "IF 51 PCH / 9451", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 27 },
-  { id: "IF 52 PCH / 9452", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 28 },
-  { id: "IF 53 PCH / 9453", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 29 },
-  { id: "IF 54 PCH / 9454", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 30 },
-  { id: "IF 55 PCH / 9455", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 31 },
-  { id: "IF 56 PCH / 9456", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 32 },
-  { id: "IF 57 PCH / 9457", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 33 },
-  { id: "IF 58 PCH / 9458", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 34 },
-  { id: "IF 59 PCH / 9459", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 35 },
-  { id: "IF 60 PCH / 9460", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 36 },
-  { id: "IF 61 PCH / 9461", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 37 },
-  { id: "IF 62 PCH / 9462", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 38 },
-  { id: "IF 63 PCH / 9463", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 39 },
-  { id: "IF 64 PCH / 9464", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 40 },
-  { id: "IF 40 TCM / 9427", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 41 },
-  { id: "IF 43 TCM / 9430", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 42 },
-  { id: "IF 45 TCM / 9431", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 43 },
-  { id: "IF 46 TCM / 9432", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 44 }
-];
-
+      { id: "IF 24 PCH / 9524", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 1 },
+      { id: "IF 25 PCH / 9525", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 2 },
+      { id: "IF 42 PCH / 9542", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 3 },
+      { id: "IF 41 PCH / 9541", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 4 },
+      { id: "IF 38 PCH / 9538", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 5 },
+      { id: "IF 40 PCH / 9540", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 6 },
+      { id: "IF 39 PCH / 9539", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 7 },
+      { id: "IF 37 PCH / 9537", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 8 },
+      { id: "IF 35 PCH / 9535", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 9 },
+      { id: "IF 34 PCH / 9534", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 10 },
+      { id: "IF 32 PCH / 9532", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 11 },
+      { id: "IF 31 PCH / 9531", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 12 },
+      { id: "IF 36 PCH / 9536", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 13 },
+      { id: "IF 41 TCM / 9428", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 14 },
+      { id: "IF 42 TCM / 9429", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 15 },
+      { id: "IF 49 TCM / 9430", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 16 },
+      { id: "IF 56 TCM / 9437", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 17 },
+      { id: "IF 57 TCM / 9438", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 18 },
+      { id: "IF 58 TCM / 9439", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 19 },
+      { id: "IF 44 PCH / 9444", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 20 },
+      { id: "IF 45 PCH / 9445", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 21 },
+      { id: "IF 46 PCH / 9446", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 22 },
+      { id: "IF 47 PCH / 9447", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 23 },
+      { id: "IF 48 PCH / 9448", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 24 },
+      { id: "IF 49 PCH / 9449", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 25 },
+      { id: "IF 50 PCH / 9450", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 26 },
+      { id: "IF 51 PCH / 9451", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 27 },
+      { id: "IF 52 PCH / 9452", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 28 },
+      { id: "IF 53 PCH / 9453", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 29 },
+      { id: "IF 54 PCH / 9454", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 30 },
+      { id: "IF 55 PCH / 9455", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 31 },
+      { id: "IF 56 PCH / 9456", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 32 },
+      { id: "IF 57 PCH / 9457", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 33 },
+      { id: "IF 58 PCH / 9458", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 34 },
+      { id: "IF 59 PCH / 9459", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 35 },
+      { id: "IF 60 PCH / 9460", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 36 },
+      { id: "IF 61 PCH / 9461", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 37 },
+      { id: "IF 62 PCH / 9462", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 38 },
+      { id: "IF 63 PCH / 9463", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 39 },
+      { id: "IF 64 PCH / 9464", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 40 },
+      { id: "IF 40 TCM / 9427", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 41 },
+      { id: "IF 43 TCM / 9430", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 42 },
+      { id: "IF 45 TCM / 9431", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 43 },
+      { id: "IF 46 TCM / 9432", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 44 }
+    ];
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -961,7 +960,7 @@
 
     const countAll = document.getElementById("countAll");
     const countTraseu = document.getElementById("countTraseu");
-    const countDepou = document.getElementById("countDepou");
+    const countGaraj = document.getElementById("countGaraj");
     const countRezerva = document.getElementById("countRezerva");
     const countDefect = document.getElementById("countDefect");
 
@@ -1035,12 +1034,14 @@
           const legacyDriver = String(u.driver || "").trim();
           const d1 = String(u.driver1 ?? legacyDriver ?? "").trim();
           const d2 = String(u.driver2 ?? "").trim();
+          const rawStatus = String(u.status || "Garaj").trim();
+          const status = rawStatus === "La depou" ? "Garaj" : rawStatus;
           return {
             id: String(u.id).trim(),
             model: String(u.model || "").trim(),
             line: line,
             tour: String(u.tour || "").trim(),
-            status: String(u.status || "Garaj").trim(),
+            status,
             driver1: d1,
             driver2: d2,
             sort_order: Number.isFinite(Number(u.sort_order)) ? Number(u.sort_order) : idx + 1
@@ -1072,7 +1073,7 @@
       if (status === "În traseu") return "pill pill-traseu";
       if (status === "Rezervă") return "pill pill-rezerva";
       if (status === "Defect / Revizie") return "pill pill-defect";
-      return "pill pill-depou";
+      return "pill pill-garaj";
     }
 
     function formatDriversHtml(u) {
@@ -1125,7 +1126,7 @@
     function refreshCountsAndStatusBar(visibleCount) {
       countAll.textContent = String(fleet.length);
       countTraseu.textContent = String(fleet.filter((u) => u.status === "În traseu").length);
-      countDepou.textContent = String(fleet.filter((u) => u.status === "Garaj").length);
+      countGaraj.textContent = String(fleet.filter((u) => u.status === "Garaj").length);
       countRezerva.textContent = String(fleet.filter((u) => u.status === "Rezervă").length);
       countDefect.textContent = String(fleet.filter((u) => u.status === "Defect / Revizie").length);
 
@@ -1483,11 +1484,11 @@
         await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPass.value);
       } catch (err) {
         console.error(err);
-        loginErr.textContent = "Autentificare eșuată. Emailul și/sau parola sunt incorecte.";
+        loginErr.textContent = "Autentificare eșuată. Verifică emailul și parola din Firebase Authentication.";
         loginErr.style.display = "block";
       } finally {
         loginSubmit.disabled = false;
-        loginSubmit.textContent = "Autentificare";
+        loginSubmit.textContent = "Log in";
       }
     });
 
@@ -1520,13 +1521,9 @@
           await set(scheduleTypeRef, scheduleType);
         }
 
-        const snapFleet = await get(fleetRef);
-        if (!snapFleet.exists()) {
-          fleet = DEFAULT_FLEET.map((u) => ({ ...u }));
-          await set(fleetRef, fleet);
-        } else {
-          fleet = normalizeFleet(snapFleet.val());
-        }
+        const seededFleet = DEFAULT_FLEET.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
+        await set(fleetRef, seededFleet);
+        fleet = normalizeFleet(seededFleet);
         renderFleet();
       } catch (err) {
         console.error(err);
