@@ -46,7 +46,6 @@
       flex: 1 0 auto;
     }
 
-    /* CADRU PRINCIPAL TIP FEREASTRĂ DESKTOP ANII 2010 */
     .desktop-frame {
       background: rgba(255, 255, 255, 0.72);
       border: 1px solid rgba(255, 255, 255, 0.95);
@@ -106,7 +105,6 @@
       padding: 12px;
     }
 
-    /* TAB-URI RAPIDE DE STATUS (STIL 2010) */
     .quick-tabs {
       display: flex;
       flex-wrap: wrap;
@@ -156,7 +154,6 @@
       color: #ffffff;
     }
 
-    /* BARĂ INSPECTOR VEHICUL SELECTAT */
     .inspector-strip {
       background: linear-gradient(180deg, #f8fbfe 0%, #e3ecf6 100%);
       border: 1px solid var(--border);
@@ -409,7 +406,6 @@
       gap: 4px;
     }
 
-    /* STATUS BAR DESKTOP ANII 2010 */
     .status-bar {
       background: linear-gradient(180deg, #dce5f0 0%, #c8d5e5 100%);
       border-top: 1px solid var(--border);
@@ -424,7 +420,6 @@
       box-shadow: inset 0 1px 0 #ffffff;
     }
 
-    /* LOGIN CARD */
     .login-card {
       max-width: 390px;
       margin: 64px auto;
@@ -482,7 +477,6 @@
       font-size: 11px;
     }
 
-    /* MODALE */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -540,7 +534,6 @@
       border-top: 1px solid #cdd9e6;
     }
 
-    /* FOOTER */
     .site-footer {
       flex-shrink: 0;
       background: linear-gradient(180deg, #2a4d78 0%, #1d3554 100%);
@@ -589,7 +582,6 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- ECRAN AUTENTIFICARE -->
     <div id="loginView" class="login-card">
       <div class="login-card-header">
         <h2>Ecotrans STCM — Fleet Management</h2>
@@ -612,7 +604,6 @@
       </div>
     </div>
 
-    <!-- INTERFAȚA PRINCIPALĂ -->
     <div id="mainView" class="hidden">
       <div class="desktop-frame">
         <div class="title-bar">
@@ -640,7 +631,6 @@
         </div>
 
         <div class="workspace">
-          <!-- TAB-URI RAPIDE DE STATUS -->
           <div class="quick-tabs" role="tablist">
             <button type="button" class="tab-btn active" data-tab-status="ALL">
               Toate <span id="countAll" class="tab-count">0</span>
@@ -659,7 +649,6 @@
             </button>
           </div>
 
-          <!-- BARĂ INSPECTOR VEHICUL SELECTAT -->
           <div id="inspectorStrip" class="inspector-strip">
             <div class="inspector-info">
               <span class="inspector-tag">SELECȚIE</span>
@@ -724,7 +713,6 @@
     </div>
   </div>
 
-  <!-- SUBSOL PAGINĂ HTML -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div>
@@ -740,7 +728,6 @@
     </div>
   </footer>
 
-  <!-- MODAL: SCHIMBĂ LINIA -->
   <div id="lineModal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-header">
@@ -748,7 +735,6 @@
       </div>
       <div class="modal-body">
         <p id="lineModalSub" class="modal-sub"></p>
-
         <div class="form-group">
           <label for="lineSelect">Alege linia:</label>
           <select id="lineSelect">
@@ -758,7 +744,6 @@
             <option value="701">701</option>
           </select>
         </div>
-
         <div class="modal-footer">
           <button id="lineCancelBtn" type="button">Anulează</button>
           <button id="lineSaveBtn" type="button" class="btn-primary">Salvează linia</button>
@@ -767,7 +752,6 @@
     </div>
   </div>
 
-  <!-- MODAL: SCHIMBĂ TURUL & STATUSUL -->
   <div id="tourStatusModal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-header">
@@ -775,12 +759,10 @@
       </div>
       <div class="modal-body">
         <p id="tsModalSub" class="modal-sub"></p>
-
         <div class="form-group">
           <label for="tourSelect">Turul:</label>
           <select id="tourSelect"></select>
         </div>
-
         <div class="form-group">
           <label for="statusSelect">Status vehicul:</label>
           <select id="statusSelect">
@@ -790,7 +772,6 @@
             <option value="Defect / Revizie">Defect / Revizie</option>
           </select>
         </div>
-
         <div class="modal-footer">
           <button id="tsCancelBtn" type="button">Anulează</button>
           <button id="tsSaveBtn" type="button" class="btn-primary">Salvează</button>
@@ -799,7 +780,6 @@
     </div>
   </div>
 
-  <!-- MODAL: REPARTIZEAZĂ ȘOFERI (SCHIMB 1 & SCHIMB 2) -->
   <div id="driverModal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-header">
@@ -807,17 +787,14 @@
       </div>
       <div class="modal-body">
         <p id="driverModalSub" class="modal-sub"></p>
-
         <div class="form-group">
           <label for="driverShift1Select">Șofer schimb 1:</label>
           <select id="driverShift1Select"></select>
         </div>
-
         <div class="form-group">
           <label for="driverShift2Select">Șofer schimb 2:</label>
           <select id="driverShift2Select"></select>
         </div>
-
         <div class="modal-footer">
           <button id="driverClearBtn" type="button" class="btn-danger">Nerepartizat</button>
           <button id="driverCancelBtn" type="button">Anulează</button>
@@ -854,7 +831,6 @@
       measurementId: "G-HSZ2MHYD8F"
     };
 
-    // Ture fixe in functie de linie (435 -> 4 tururi, 470 -> 2 tururi, 701 -> 1 tur)
     const TOURS_BY_LINE = {
       "N/A": [""],
       "435": ["", "T1", "T2", "T3", "T4"],
@@ -863,23 +839,9 @@
     };
 
     const PRESET_DRIVERS = [
-      "Void",
-      "MN",
-      "Vlad",
-      "Cristian",
-      "David",
-      "Clau",
-      "Damian",
-      "TransportEd",
-      "Nosiv",
-      "Miti",
-      "D4vid",
-      "Stefan",
-      "Yanis",
-      "Davidu1",
-      "Cezar",
-      "Dvx",
-      "Cristi"
+      "Void", "MN", "Vlad", "Cristian", "David", "Clau", "Damian",
+      "TransportEd", "Nosiv", "Miti", "D4vid", "Stefan", "Yanis",
+      "Davidu1", "Cezar", "Dvx", "Cristi"
     ];
 
     const DEFAULT_FLEET = [
@@ -973,7 +935,6 @@
     const statusBarLeft = document.getElementById("statusBarLeft");
     const statusBarRight = document.getElementById("statusBarRight");
 
-    // Modale
     const lineModal = document.getElementById("lineModal");
     const lineModalTitle = document.getElementById("lineModalTitle");
     const lineModalSub = document.getElementById("lineModalSub");
@@ -998,21 +959,15 @@
     const driverCancelBtn = document.getElementById("driverCancelBtn");
     const driverSaveBtn = document.getElementById("driverSaveBtn");
 
-    // Elimină diacriticele pentru textul din PDF
     function stripDiacritics(str) {
       return String(str ?? "")
         .normalize("NFD")
-        .replace(/[̀-ͯ]/g, "")
-        .replace(/ș/g, "s")
-        .replace(/Ș/g, "S")
-        .replace(/ț/g, "t")
-        .replace(/Ț/g, "T")
-        .replace(/ă/g, "a")
-        .replace(/Ă/g, "A")
-        .replace(/â/g, "a")
-        .replace(/Â/g, "A")
-        .replace(/î/g, "i")
-        .replace(/Î/g, "I");
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ș/g, "s").replace(/Ș/g, "S")
+        .replace(/ț/g, "t").replace(/Ț/g, "T")
+        .replace(/ă/g, "a").replace(/Ă/g, "A")
+        .replace(/â/g, "a").replace(/Â/g, "A")
+        .replace(/î/g, "i").replace(/Î/g, "I");
     }
 
     function escapeHtml(s) {
@@ -1039,7 +994,7 @@
           return {
             id: String(u.id).trim(),
             model: String(u.model || "").trim(),
-            line: line,
+            line,
             tour: String(u.tour || "").trim(),
             status,
             driver1: d1,
@@ -1157,14 +1112,11 @@
 
       refreshCountsAndStatusBar(list.length);
       refreshInspector();
-
       fleetRows.innerHTML = "";
 
       for (const u of list) {
         const tr = document.createElement("tr");
-        if (u.id === selectedRowId) {
-          tr.classList.add("selected");
-        }
+        if (u.id === selectedRowId) tr.classList.add("selected");
         tr.addEventListener("click", (e) => {
           if (e.target.closest("button")) return;
           selectedRowId = u.id;
@@ -1181,9 +1133,7 @@
         tdLine.innerHTML = `<strong>${escapeHtml(u.line || "N/A")}</strong>`;
 
         const tdTour = document.createElement("td");
-        tdTour.innerHTML = u.tour
-          ? `<strong>${escapeHtml(u.tour)}</strong>`
-          : `<span class="muted-text">—</span>`;
+        tdTour.innerHTML = u.tour ? `<strong>${escapeHtml(u.tour)}</strong>` : `<span class="muted-text">—</span>`;
 
         const tdStatus = document.createElement("td");
         tdStatus.innerHTML = `<span class="${statusPillClass(u.status)}">${escapeHtml(u.status)}</span>`;
@@ -1224,13 +1174,11 @@
 
         actBox.append(btnLine, btnTourStatus, btnDriver);
         tdAct.appendChild(actBox);
-
         tr.append(tdParc, tdModel, tdLine, tdTour, tdStatus, tdDriver, tdAct);
         fleetRows.appendChild(tr);
       }
     }
 
-    // Butoane inspector
     inspLineBtn.addEventListener("click", () => {
       const unit = fleet.find((u) => u.id === selectedRowId);
       if (unit) openLineModal(unit);
@@ -1246,7 +1194,6 @@
       if (unit) openDriverModal(unit);
     });
 
-    // Tab-uri status
     document.querySelectorAll(".tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         filterStatus.value = btn.dataset.tabStatus;
@@ -1274,7 +1221,6 @@
     lineSaveBtn.addEventListener("click", async () => {
       if (!activeVehicleId) return;
       const chosenLine = lineSelect.value;
-
       fleet = fleet.map((u) => {
         if (u.id !== activeVehicleId) return u;
         const validTours = TOURS_BY_LINE[chosenLine] || [""];
@@ -1282,7 +1228,6 @@
         const nextStatus = chosenLine === "N/A" && u.status === "În traseu" ? "Garaj" : u.status;
         return { ...u, line: chosenLine, tour: nextTour, status: nextStatus };
       });
-
       lineModal.classList.remove("open");
       renderFleet();
       await persistFleet(fleet);
@@ -1292,7 +1237,6 @@
       activeVehicleId = unit.id;
       tsModalTitle.textContent = `Tur & Status — ${unit.id}`;
       tsModalSub.textContent = `${unit.model} • Linia: ${unit.line || "N/A"}`;
-
       const validTours = TOURS_BY_LINE[unit.line] || [""];
       tourSelect.innerHTML = validTours
         .map((t) =>
@@ -1301,7 +1245,6 @@
             : `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`
         )
         .join("");
-
       tourSelect.value = validTours.includes(unit.tour) ? unit.tour : "";
       statusSelect.value = unit.status || "Garaj";
       tourStatusModal.classList.add("open");
@@ -1313,11 +1256,9 @@
       if (!activeVehicleId) return;
       const chosenTour = tourSelect.value;
       const chosenStatus = statusSelect.value;
-
       fleet = fleet.map((u) =>
         u.id === activeVehicleId ? { ...u, tour: chosenTour, status: chosenStatus } : u
       );
-
       tourStatusModal.classList.remove("open");
       renderFleet();
       await persistFleet(fleet);
@@ -1334,14 +1275,11 @@
       activeVehicleId = unit.id;
       driverModalTitle.textContent = `Repartizează șoferi — ${unit.id}`;
       driverModalSub.textContent = `${unit.model} • Linia: ${unit.line || "N/A"}`;
-
       const opts = buildDriverOptionsHtml();
       driverShift1Select.innerHTML = opts;
       driverShift2Select.innerHTML = opts;
-
       driverShift1Select.value = PRESET_DRIVERS.includes(unit.driver1) ? unit.driver1 : "";
       driverShift2Select.value = PRESET_DRIVERS.includes(unit.driver2) ? unit.driver2 : "";
-
       driverModal.classList.add("open");
       driverShift1Select.focus();
     }
@@ -1362,7 +1300,6 @@
       if (!activeVehicleId) return;
       const d1 = driverShift1Select.value;
       const d2 = driverShift2Select.value;
-
       fleet = fleet.map((u) =>
         u.id === activeVehicleId ? { ...u, driver1: d1, driver2: d2 } : u
       );
@@ -1377,11 +1314,9 @@
       await persistScheduleType(scheduleType);
     });
 
-    // EXPORT REPARTIZARE PDF (fara diacritice, spatiere curata, schimburi 1 si 2)
     document.getElementById("btnExportPdf").addEventListener("click", () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-
       const activeVehicles = fleet.filter((u) => u.status === "În traseu" && u.line !== "N/A");
       const cleanSchedule = stripDiacritics(scheduleType);
 
@@ -1398,7 +1333,6 @@
 
       lines.forEach((lineNo) => {
         const lineUnits = activeVehicles.filter((u) => u.line === lineNo);
-
         doc.setFont("helvetica", "bold");
         doc.setFontSize(11.5);
         doc.text(`Linia: ${lineNo}`, 14, currentY);
@@ -1464,7 +1398,6 @@
       doc.setFontSize(8.5);
       doc.setFont("helvetica", "normal");
       doc.text("Fleet Management - Ecotrans STCM", 28.5, pageHeight - 10);
-
       doc.text(`GENERAT LA DATA: ${dateStr}`, 196, pageHeight - 10, { align: "right" });
 
       doc.save(`Repartizare_STCM_${now.toISOString().slice(0, 10)}.pdf`);
@@ -1521,9 +1454,14 @@
           await set(scheduleTypeRef, scheduleType);
         }
 
-        const seededFleet = DEFAULT_FLEET.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
-        await set(fleetRef, seededFleet);
-        fleet = normalizeFleet(seededFleet);
+        const snapFleet = await get(fleetRef);
+        if (!snapFleet.exists()) {
+          const initialFleet = DEFAULT_FLEET.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
+          await set(fleetRef, initialFleet);
+          fleet = normalizeFleet(initialFleet);
+        } else {
+          fleet = normalizeFleet(snapFleet.val());
+        }
         renderFleet();
       } catch (err) {
         console.error(err);
