@@ -3,827 +3,733 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ecotrans STCM — Fleet Management</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <title>MNSys™ Fleet Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --bg-top: #d7e4f2;
-      --bg-bottom: #a5bddb;
-      --header-bg: linear-gradient(180deg, #4b73a3 0%, #28476e 50%, #1d3554 51%, #2a4d78 100%);
-      --toolbar-bg: linear-gradient(180deg, #f7f9fc 0%, #dce5f0 100%);
-      --panel-bg: linear-gradient(180deg, #ffffff 0%, #e9eff6 100%);
-      --button-bg: linear-gradient(180deg, #ffffff 0%, #e4e9ef 48%, #c6d1de 50%, #dce3ec 100%);
-      --button-hover: linear-gradient(180deg, #ffffff 0%, #edf4fc 48%, #b6d3f7 50%, #cbe0f8 100%);
-      --button-primary: linear-gradient(180deg, #6fa7e8 0%, #3474c4 50%, #1c539b 51%, #2864b5 100%);
-      --button-danger: linear-gradient(180deg, #f99696 0%, #de4141 50%, #bf1c1c 51%, #d63131 100%);
-      --table-header: linear-gradient(180deg, #e8eff8 0%, #d2dfee 50%, #bdd0e6 51%, #cbd9ec 100%);
-      --text: #1f2933;
-      --muted: #52606d;
-      --border: #7d9ab8;
-      --border-dark: #466382;
+      --bg-desktop: #b9c5d4;
+      --bg-panel: #dde4ed;
+      --bg-panel-alt: #cfd8e3;
+      --bg-surface: #ffffff;
+      --title-top: #4d6b8e;
+      --title-mid: #314b69;
+      --title-bot: #1f3349;
+      --bar-top: #f2f5f9;
+      --bar-bot: #c6d0dd;
+      --border-dark: #4b5c70;
+      --border-mid: #8e9fb4;
+      --hi: #ffffff;
+      --lo: #9baabf;
+      --ink: #111b27;
+      --ink-muted: #425367;
+      --sel-bg: #c6def8;
+      --sel-border: #175294;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    body {
+    html, body {
       margin: 0;
-      font-family: Tahoma, Verdana, Arial, sans-serif;
-      font-size: 12px;
-      color: var(--text);
-      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-      background-attachment: fixed;
+      padding: 0;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: "Tahoma", "Verdana", "Arial", sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--ink);
+      background-color: var(--bg-desktop);
+      background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(145, 161, 182, 0.28) 100%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.06) 0px,
+          rgba(255, 255, 255, 0.06) 1px,
+          transparent 1px,
+          transparent 24px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.06) 0px,
+          rgba(255, 255, 255, 0.06) 1px,
+          transparent 1px,
+          transparent 24px
+        );
     }
 
-    .wrap {
-      max-width: 1340px;
-      width: 100%;
-      margin: 14px auto;
-      padding: 0 14px;
-      flex: 1 0 auto;
+    .font-mono-tabular {
+      font-family: "Lucida Console", "Consolas", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
     }
 
-    .desktop-frame {
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      outline: 1px solid var(--border-dark);
-      border-radius: 8px;
-      box-shadow: 0 10px 28px rgba(10, 28, 56, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.85);
-      overflow: hidden;
-    }
-
-    .title-bar {
-      background: var(--header-bg);
-      border-bottom: 1px solid #162840;
-      padding: 10px 14px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 15px;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
-    }
-
-    .brand .sub {
-      margin-top: 2px;
-      font-size: 11px;
-      color: #d6e6fa;
-      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.55);
-    }
-
-    .toolbar {
-      background: var(--toolbar-bg);
-      border-bottom: 1px solid var(--border);
-      padding: 8px 12px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      box-shadow: inset 0 1px 0 #ffffff;
-    }
-
-    .toolbar-group {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .workspace {
-      padding: 12px;
-    }
-
-    .quick-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-    }
-
-    .tab-btn {
-      padding: 5px 10px;
-      border-radius: 4px 4px 0 0;
-      border: 1px solid #8fa9c4;
-      border-bottom: none;
-      background: linear-gradient(180deg, #edf3f9 0%, #cedbe9 100%);
-      color: #263b54;
-      font-size: 11px;
-      font-weight: bold;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .tab-btn.active {
-      background: linear-gradient(180deg, #ffffff 0%, #e7eff8 100%);
-      color: #123663;
-      border-color: var(--border-dark);
-      box-shadow: inset 0 2px 0 #3b82f6, 0 -1px 2px rgba(0, 0, 0, 0.08);
+    sup.tm-sup {
+      font-size: 0.65em;
+      line-height: 0;
       position: relative;
-      top: 1px;
-      padding-bottom: 6px;
-    }
-
-    .tab-count {
-      background: #d9e4f0;
-      border: 1px solid #9cb3cb;
-      border-radius: 8px;
-      padding: 0 5px;
-      font-size: 10px;
-      color: #1c3554;
-    }
-
-    .tab-btn.active .tab-count {
-      background: #2f6ec0;
-      border-color: #1b4885;
-      color: #ffffff;
-    }
-
-    .inspector-strip {
-      background: linear-gradient(180deg, #f8fbfe 0%, #e3ecf6 100%);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 7px 10px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      box-shadow: inset 0 1px 0 #ffffff;
-    }
-
-    .inspector-info {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-    }
-
-    .inspector-tag {
-      background: #1e3d66;
-      color: #ffffff;
+      vertical-align: baseline;
+      top: -0.45em;
       font-weight: bold;
-      padding: 2px 7px;
-      border-radius: 3px;
-      font-size: 10px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0;
     }
 
-    .panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: inset 0 1px 0 #ffffff, 0 1px 3px rgba(0, 0, 0, 0.08);
-    }
-
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      background: #e3ecf6;
-      border: 1px solid #b5c7db;
-      border-radius: 4px;
-      padding: 7px 8px;
-    }
-
-    .filter-left, .filter-right {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .field-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 2px 6px;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    .field-inline label {
-      font-size: 11px;
-      font-weight: bold;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .field-inline select {
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      padding: 2px 4px;
-      font-weight: bold;
-      color: #1b4f93;
-      cursor: pointer;
-    }
-
-    input, select, button {
-      font-family: inherit;
-      font-size: 11px;
-      border-radius: 3px;
-      outline: none;
-    }
-
-    input[type="text"], input[type="email"], input[type="password"], input[type="search"], select {
+    .win-frame {
+      background: var(--bg-panel);
       border: 1px solid var(--border-dark);
-      padding: 4px 7px;
-      background: #ffffff linear-gradient(180deg, #f2f5f9 0%, #ffffff 22%);
-      color: var(--text);
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.14);
+      box-shadow:
+        inset 1px 1px 0 var(--hi),
+        inset -1px -1px 0 var(--lo),
+        0 2px 6px rgba(10, 20, 34, 0.22);
+      border-radius: 2px;
     }
 
-    input:focus, select:focus {
-      border-color: #2563eb;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.14), 0 0 4px rgba(37, 99, 235, 0.45);
+    .win-titlebar {
+      background: linear-gradient(
+        180deg,
+        var(--title-top) 0%,
+        var(--title-mid) 49%,
+        var(--title-bot) 50%,
+        #283e57 100%
+      );
+      color: #ffffff;
+      border-bottom: 1px solid #152333;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.65);
     }
 
-    button {
+    .win-bar {
+      background: linear-gradient(180deg, var(--bar-top) 0%, var(--bar-bot) 100%);
+      border-bottom: 1px solid #8496ab;
+      box-shadow: inset 0 1px 0 var(--hi);
+    }
+
+    .win-sunken {
+      background: var(--bg-surface);
+      border-top: 1px solid #596b80;
+      border-left: 1px solid #596b80;
+      border-right: 1px solid #c3cedb;
+      border-bottom: 1px solid #c3cedb;
+      box-shadow: inset 1px 1px 1px rgba(12, 22, 36, 0.15);
+      border-radius: 1px;
+    }
+
+    .win-btn {
+      background: linear-gradient(180deg, #ffffff 0%, #e1e8f0 49%, #c7d2df 50%, #d8e1ec 100%);
+      border-top: 1px solid #7c8ea3;
+      border-left: 1px solid #7c8ea3;
+      border-right: 1px solid #495a6e;
+      border-bottom: 1px solid #495a6e;
+      box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.85);
+      color: var(--ink);
+      border-radius: 2px;
       cursor: pointer;
-      border: 1px solid #6f88a3;
-      background: var(--button-bg);
-      color: #19314e;
-      font-weight: bold;
-      padding: 4px 9px;
-      text-shadow: 0 1px 0 #ffffff;
-      box-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(0, 0, 0, 0.14);
+      user-select: none;
     }
 
-    button:hover:not(:disabled) {
-      background: var(--button-hover);
-      border-color: #486e9b;
-      color: #0d2138;
+    .win-btn:hover:not(:disabled) {
+      background: linear-gradient(180deg, #ffffff 0%, #ebf2fa 49%, #d3e2f3 50%, #e2edf9 100%);
+      border-color: #265486;
     }
 
-    button:active:not(:disabled) {
-      background: linear-gradient(180deg, #c6d1de 0%, #e4e9ef 100%);
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22);
+    .win-btn:active:not(:disabled) {
+      background: linear-gradient(180deg, #c0ccd9 0%, #d8e1ec 100%);
+      box-shadow: inset 1px 1px 2px rgba(15, 25, 38, 0.3);
     }
 
-    button:disabled {
-      opacity: 0.58;
+    .win-btn:disabled {
+      opacity: 0.55;
       cursor: not-allowed;
     }
 
-    button.btn-primary {
-      background: var(--button-primary);
-      border-color: #163e75;
-      color: #ffffff;
-      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.45);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    button.btn-primary:hover:not(:disabled) {
-      background: linear-gradient(180deg, #81b6f3 0%, #4381cf 50%, #245fa9 51%, #3170c2 100%);
-      color: #ffffff;
-    }
-
-    button.btn-danger {
-      background: var(--button-danger);
-      border-color: #871313;
+    .win-btn-primary {
+      background: linear-gradient(180deg, #5289ca 0%, #275fa2 49%, #19487e 50%, #225491 100%);
+      border: 1px solid #123154;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
       color: #ffffff;
       text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
     }
 
-    button.btn-danger:hover:not(:disabled) {
-      background: linear-gradient(180deg, #fba6a6 0%, #e65151 50%, #cf2525 51%, #e03e3e 100%);
+    .win-btn-primary:hover:not(:disabled) {
+      background: linear-gradient(180deg, #6399d9 0%, #306db5 49%, #1f5390 50%, #2a60a1 100%);
     }
 
-    button.btn-sm {
-      padding: 3px 6px;
-      font-size: 10px;
+    .win-btn-success {
+      background: linear-gradient(180deg, #4caf50 0%, #2e7d32 49%, #1b5e20 50%, #257028 100%);
+      border: 1px solid #0d3810;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
     }
 
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--border-dark);
-      border-radius: 3px;
+    .win-btn-success:hover:not(:disabled) {
+      background: linear-gradient(180deg, #5cb860 0%, #388e3c 49%, #246b28 50%, #2f8333 100%);
+    }
+
+    .win-btn-danger {
+      background: linear-gradient(180deg, #d3675d 0%, #a53126 49%, #822219 50%, #962b20 100%);
+      border: 1px solid #57140e;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .win-close-red {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 20px;
+      background: linear-gradient(180deg, #e55347 0%, #b82419 49%, #8e170e 50%, #a81e14 100%);
+      border: 1px solid #ff7b70;
+      box-shadow:
+        0 0 0 1px #5c0d07,
+        inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+      font-family: "Tahoma", "Arial", sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 1;
+      border-radius: 2px;
+      cursor: pointer;
+      user-select: none;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .win-close-red:hover {
+      background: linear-gradient(180deg, #f2685c 0%, #cf2c1f 49%, #a31c12 50%, #be2418 100%);
+      border-color: #ffa59e;
+    }
+
+    .win-close-red:active {
+      background: linear-gradient(180deg, #8e170e 0%, #b82419 100%);
+      box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px #5c0d07;
+    }
+
+    .win-input, .win-select {
       background: #ffffff;
+      border-top: 1px solid #596b80;
+      border-left: 1px solid #596b80;
+      border-right: 1px solid #b3bfcd;
+      border-bottom: 1px solid #b3bfcd;
+      box-shadow: inset 1px 1px 1px rgba(14, 24, 38, 0.14);
+      color: var(--ink);
+      font-family: "Tahoma", "Verdana", "Arial", sans-serif;
+      font-size: 13.5px;
+      border-radius: 1px;
     }
 
-    table {
+    .win-input:focus, .win-select:focus {
+      outline: 1px solid #175294;
+      border-color: #175294;
+    }
+
+    .avl-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 920px;
+      font-size: 13.5px;
     }
 
-    th, td {
-      padding: 7px 9px;
+    .avl-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: linear-gradient(180deg, #f5f8fb 0%, #ced8e4 100%);
+      color: #122030;
+      font-weight: bold;
       text-align: left;
-      border-bottom: 1px solid #d2dde9;
-      border-right: 1px solid #e3ebf3;
-      font-size: 11px;
+      padding: 6px 8px;
+      border-right: 1px solid #96a6b9;
+      border-bottom: 1px solid #687a90;
+      box-shadow: inset 0 1px 0 #ffffff;
+      white-space: nowrap;
+    }
+
+    .avl-table tbody tr {
+      background: #ffffff;
+      border-bottom: 1px solid #cbd4e0;
+    }
+
+    .avl-table tbody tr:nth-child(even) {
+      background: #f3f6fa;
+    }
+
+    .avl-table tbody tr:hover {
+      background: #e1eefc;
+    }
+
+    .avl-table tbody tr.is-selected {
+      background: var(--sel-bg) !important;
+      outline: 1px dotted var(--sel-border);
+    }
+
+    .avl-table tbody td {
+      padding: 5.5px 8px;
+      border-right: 1px solid #d7dfe9;
       vertical-align: middle;
     }
 
-    th:last-child, td:last-child {
-      border-right: none;
-    }
-
-    th {
-      font-size: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: #1c3758;
-      background: var(--table-header);
-      border-bottom: 1px solid var(--border-dark);
-      text-shadow: 0 1px 0 #ffffff;
-    }
-
-    tbody tr {
-      cursor: pointer;
-    }
-
-    tbody tr:nth-child(even) {
-      background-color: #f8fbfe;
-    }
-
-    tbody tr:hover td {
-      background-color: #eaf3fd;
-    }
-
-    tbody tr.selected td {
-      background-color: #d6e8fc;
-      border-bottom-color: #8bb5e3;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 3px;
-      font-size: 10px;
-      font-weight: bold;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-
-    .pill-garaj { background: linear-gradient(180deg, #e5e7eb 0%, #cbd5e1 100%); color: #334155; }
-    .pill-traseu { background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 100%); color: #14532d; }
-    .pill-rezerva { background: linear-gradient(180deg, #fef08a 0%, #facc15 100%); color: #713f12; }
-    .pill-defect { background: linear-gradient(180deg, #fca5a5 0%, #f87171 100%); color: #7f1d1d; }
-
-    .muted-text { color: #6b7280; font-style: italic; }
-
-    .shift-line {
-      display: block;
-      line-height: 1.35;
-    }
-
-    .shift-label {
-      color: #4b5563;
-      font-size: 10px;
-      font-weight: bold;
-    }
-
-    .row-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .status-bar {
-      background: linear-gradient(180deg, #dce5f0 0%, #c8d5e5 100%);
-      border-top: 1px solid var(--border);
-      padding: 5px 12px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+    .badge-status {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: #2b3f56;
-      box-shadow: inset 0 1px 0 #ffffff;
-    }
-
-    .login-card {
-      max-width: 390px;
-      margin: 64px auto;
-      background: linear-gradient(180deg, #ffffff 0%, #e7eff8 100%);
-      border: 1px solid var(--border-dark);
-      border-radius: 7px;
-      box-shadow: 0 12px 28px rgba(0, 20, 48, 0.32);
-      overflow: hidden;
-    }
-
-    .login-card-header {
-      background: var(--header-bg);
-      padding: 10px 14px;
-      border-bottom: 1px solid #162840;
-    }
-
-    .login-card-header h2 {
-      margin: 0;
-      font-size: 13px;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
-    }
-
-    .login-card-body {
-      padding: 16px;
-    }
-
-    .login-card p {
-      margin: 0 0 12px 0;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    .form-group label {
-      font-size: 11px;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-
-    .alert-err {
-      display: none;
-      margin-bottom: 10px;
-      padding: 7px 9px;
-      border-radius: 4px;
-      background: #ffe5e5;
-      border: 1px solid #c53030;
-      color: #9b1c1c;
-      font-size: 11px;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(12, 26, 48, 0.52);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 50;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-card {
-      width: 100%;
-      max-width: 440px;
-      background: linear-gradient(180deg, #ffffff 0%, #e7eff8 100%);
-      border: 1px solid var(--border-dark);
-      border-radius: 6px;
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
-      overflow: hidden;
-    }
-
-    .modal-header {
-      background: var(--header-bg);
-      padding: 8px 12px;
-      border-bottom: 1px solid #162840;
-    }
-
-    .modal-title {
-      margin: 0;
-      font-size: 12px;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
-    }
-
-    .modal-body {
-      padding: 14px;
-    }
-
-    .modal-sub {
-      margin: 0 0 12px 0;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
       gap: 6px;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px solid #cdd9e6;
-    }
-
-    .site-footer {
-      flex-shrink: 0;
-      background: linear-gradient(180deg, #2a4d78 0%, #1d3554 100%);
-      border-top: 1px solid var(--border-dark);
-      padding: 12px 16px;
-      margin-top: 18px;
-      color: #d4e4f7;
-    }
-
-    .footer-inner {
-      max-width: 1340px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 11px;
-    }
-
-    .footer-brand {
-      color: #ffffff;
+      padding: 2px 7px;
+      font-size: 12.5px;
       font-weight: bold;
+      border-radius: 1px;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .badge-traseu {
+      background: #d5f0dd;
+      border-color: #2b7943;
+      color: #0e3f1d;
+    }
+
+    .badge-rezerva {
+      background: #ffefba;
+      border-color: #a47e0e;
+      color: #543d00;
+    }
+
+    .badge-garaj {
+      background: #e3e9f0;
+      border-color: #748598;
+      color: #233040;
+    }
+
+    .led {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 1px rgba(0, 0, 0, 0.5);
+    }
+
+    .led-green { background: #1cb546; }
+    .led-amber { background: #e09f00; }
+    .led-gray { background: #77879a; }
+    .led-red { background: #cb3123; }
+
+    .win-statusbar {
+      background: linear-gradient(180deg, #d4dde8 0%, #bcc8d6 100%);
+      border-top: 1px solid #788aa0;
+      box-shadow: inset 0 1px 0 #eef3f8;
+    }
+
+    .version-badge {
+      font-family: "Lucida Console", "Consolas", monospace;
       font-size: 12px;
+      font-weight: bold;
+      color: #112031;
+      background: #edf2f7;
+      border-top: 1px solid #687a90;
+      border-left: 1px solid #687a90;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      padding: 2px 8px;
+      border-radius: 1px;
     }
-
-    .footer-brand sup {
-      font-size: 8px;
-      color: #93c5fd;
-    }
-
-    .footer-notice {
-      max-width: 740px;
-      line-height: 1.4;
-      margin-top: 3px;
-      color: #b4ccf0;
-    }
-
-    .footer-right {
-      text-align: right;
-      line-height: 1.4;
-    }
-
-    .hidden { display: none !important; }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div id="loginView" class="login-card">
-      <div class="login-card-header">
-        <h2>Ecotrans STCM — Fleet Management</h2>
-      </div>
-      <div class="login-card-body">
-        <p>Autentificați-vă pentru a accesa consola de dispecerat.</p>
-        <div id="loginErr" class="alert-err"></div>
+<body class="flex flex-col min-h-screen">
 
-        <form id="loginForm">
-          <div class="form-group">
-            <label for="loginEmail">Email</label>
-            <input id="loginEmail" type="email" required autocomplete="username" />
+  <div id="loginScreen" class="flex-1 flex items-center justify-center p-4">
+    <div class="win-frame w-full max-w-[480px] overflow-hidden">
+      <div class="win-titlebar px-3 py-1.5 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="1" y="2" width="14" height="12" fill="#e9f1fb" stroke="#122235" stroke-width="1.2"/>
+            <polyline points="2.5,10.5 6,7 9.2,9.5 13.5,4.5" stroke="#175294" stroke-width="1.5" fill="none"/>
+            <circle cx="13.5" cy="4.5" r="1.6" fill="#1cb546"/>
+          </svg>
+          <span class="font-bold text-[13.5px]">MNSys<sup class="tm-sup">TM</sup> Fleet Management</span>
+        </div>
+        <span class="font-mono-tabular text-xs px-1.5 py-0.5 bg-black/25 border border-white/20">AVL</span>
+      </div>
+
+      <div class="p-4 space-y-3">
+        <div class="win-sunken p-2.5 bg-[#f7fafe] flex items-start gap-2.5">
+          <svg class="w-5 h-5 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="4" y="10" width="16" height="10" fill="#dce7f5" stroke="#243e5c" stroke-width="1.5"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#243e5c" stroke-width="1.5" fill="none"/>
+            <circle cx="12" cy="15" r="1.6" fill="#175294"/>
+          </svg>
+          <div class="text-[13px] text-[#19293b]">
+            <div class="font-bold">Conectare la consola AVL Ecotrans STCM</div>
+            <div class="text-[#415266] mt-0.5">
+              Autentifică-te cu contul existent din Firebase (<span class="font-mono-tabular">avl-stcm</span>).
+            </div>
           </div>
-          <div class="form-group">
-            <label for="loginPass">Parolă</label>
-            <input id="loginPass" type="password" required autocomplete="current-password" />
+        </div>
+
+        <div id="loginAlert" class="hidden win-sunken p-2 bg-[#fdeceb] border-[#a8261b] text-[#831810] text-[13px] font-medium"></div>
+
+        <form id="loginForm" class="space-y-2.5" novalidate>
+          <div>
+            <label for="loginEmail" class="block font-bold text-[13px] mb-1">Adresă de e-mail:</label>
+            <input
+              id="loginEmail"
+              type="email"
+              autocomplete="username"
+              placeholder="Email"
+              class="win-input w-full px-2.5 py-1.5"
+              required
+            />
           </div>
-          <button id="loginSubmit" type="submit" class="btn-primary" style="width: 100%; margin-top: 4px;">Log in</button>
+
+          <div>
+            <label for="loginPassword" class="block font-bold text-[13px] mb-1">Parolă:</label>
+            <input
+              id="loginPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              class="win-input w-full px-2.5 py-1.5"
+              required
+            />
+          </div>
+
+          <div class="pt-1 flex items-center justify-between gap-2">
+            <div id="authInitStatus" class="text-[12.5px] text-[#3d4f63] flex items-center gap-1.5">
+              <span class="led led-amber"></span>
+              <span>Verificare sesiune Firebase...</span>
+            </div>
+
+            <button
+              id="loginSubmitBtn"
+              type="submit"
+              class="win-btn win-btn-primary px-4 py-1.5 text-[13px] font-bold"
+            >
+              Autentificare
+            </button>
+          </div>
         </form>
       </div>
+
+      <div class="win-statusbar px-3 py-1.5 flex items-center justify-between text-[12px] text-[#28384b]">
+        <span>Platformă operațională destinată personalului angajat al Ecotrans STCM în cadrul mediului de simulare Roblox.</span>
+        <span class="version-badge">v0.0.23</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="dispatchApp" class="hidden flex-1 flex flex-col w-full max-w-[1720px] mx-auto p-1.5 sm:p-2 gap-1.5">
+
+    <header class="win-frame overflow-hidden">
+      <div class="win-titlebar px-2.5 py-1 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="1" y="1.5" width="14" height="13" fill="#eaf2fc" stroke="#112032" stroke-width="1.2"/>
+            <line x1="1" y1="5" x2="15" y2="5" stroke="#46688f" stroke-width="1"/>
+            <circle cx="4" cy="8.2" r="1.3" fill="#1cb546"/>
+            <line x1="6.8" y1="8.2" x2="13.2" y2="8.2" stroke="#17273b" stroke-width="1.2"/>
+            <circle cx="4" cy="11.5" r="1.3" fill="#e09f00"/>
+            <line x1="6.8" y1="11.5" x2="12.2" y2="11.5" stroke="#17273b" stroke-width="1.2"/>
+          </svg>
+          <span class="font-bold text-[13.5px] tracking-tight">MNSys<sup class="tm-sup">TM</sup> Fleet Management</span>
+         
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5 text-[12.5px]">
+          <div class="px-2 py-0.5 bg-black/25 border border-white/20 flex items-center gap-1.5" title="Stare sincronizare cloud">
+            <span id="syncLed" class="led led-amber"></span>
+            <span id="syncStatusText">Sincronizare RTDB...</span>
+          </div>
+
+          <div class="px-2 py-0.5 bg-black/25 border border-white/20 flex items-center gap-1">
+            <span class="text-[#c7dcf2]">Cont:</span>
+            <strong id="sessionUserLabel" class="font-mono-tabular truncate max-w-[200px]">—</strong>
+          </div>
+
+          <button
+            id="signOutBtn"
+            type="button"
+            class="win-btn win-btn-danger px-2.5 py-0.5 text-[12.5px] font-bold"
+          >
+            Deconectare
+          </button>
+        </div>
+      </div>
+
+      <div class="win-bar px-2 py-1 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button
+            id="reopenPlanningBtn"
+            type="button"
+            class="win-btn win-btn-primary px-2.5 py-1 text-[12.5px] font-bold"
+          >
+            Deschide Meniu Planificare
+          </button>
+          <button
+            id="resetFiltersBtn"
+            type="button"
+            class="win-btn px-2.5 py-1 text-[12.5px] font-bold"
+          >
+            Resetează Filtrele
+          </button>
+          <button
+            id="clearVehicleAssignmentBtn"
+            type="button"
+            class="win-btn px-2.5 py-1 text-[12.5px] font-bold"
+          >
+            Golește Repartizarea
+          </button>
+          <button
+            id="vectorMapBtn"
+            type="button"
+            class="win-btn px-2.5 py-1 text-[12.5px] font-bold"
+          >
+            Hartă Vectorială
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5 text-[12.5px]">
+          <div class="win-sunken px-2 py-0.5 bg-white flex items-center gap-1.5">
+            <span class="led led-green"></span>
+            <span>În traseu:</span>
+            <strong id="countInTraseu" class="font-mono-tabular text-[#0e3f1d]">0</strong>
+          </div>
+          <div class="win-sunken px-2 py-0.5 bg-white flex items-center gap-1.5">
+            <span class="led led-amber"></span>
+            <span>Rezervă:</span>
+            <strong id="countRezerva" class="font-mono-tabular text-[#543d00]">0</strong>
+          </div>
+          <div class="win-sunken px-2 py-0.5 bg-white flex items-center gap-1.5">
+            <span class="led led-gray"></span>
+            <span>Garaj:</span>
+            <strong id="countGaraj" class="font-mono-tabular text-[#233040]">0</strong>
+          </div>
+          <div class="win-sunken px-2 py-0.5 bg-[#eef3f9] flex items-center gap-1.5">
+            <span>Total parc:</span>
+            <strong id="countTotal" class="font-mono-tabular text-[#13263d]">40</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="statusBanner" class="hidden win-frame px-3 py-1 text-[12.5px] flex items-center justify-between gap-2">
+      <span id="statusBannerText" class="font-bold"></span>
+      <button id="dismissBannerBtn" type="button" class="win-btn px-2 py-0.5 text-[12px] font-bold">Închide</button>
     </div>
 
-    <div id="mainView" class="hidden">
-      <div class="desktop-frame">
-        <div class="title-bar">
-          <div class="brand">
-            <h1>Ecotrans STCM — Fleet Management</h1>
-            <div id="sessionMeta" class="sub">Dispecerat flotă • Firebase Realtime Database</div>
-          </div>
-          <div class="toolbar-group">
-            <button id="btnLogout" type="button">Log out</button>
+    <main id="mainGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 items-start">
+
+      <section id="planningPanel" class="win-frame lg:col-span-4 overflow-hidden hidden">
+        <div class="win-titlebar px-2.5 py-1 flex items-center justify-between gap-2">
+          <span class="font-bold text-[13px]">Planificare Vehicul</span>
+          <div class="flex items-center gap-1.5">
+            <span id="selectedParkBadge" class="font-mono-tabular text-[12px] font-bold px-2 py-0.5 bg-black/30 border border-white/25 rounded-[1px]">9525</span>
+            <button
+              id="closePlanningBtn"
+              type="button"
+              title="Închide meniul de planificare"
+              aria-label="Închide meniul de planificare"
+              class="win-close-red"
+            >&times;</button>
           </div>
         </div>
 
-        <div class="toolbar">
-          <div class="toolbar-group">
-            <div class="field-inline">
-              <label for="scheduleTypeSelect">Tip program:</label>
-              <select id="scheduleTypeSelect">
-                <option value="Zile lucrătoare">Zile lucrătoare</option>
-                <option value="Sâmbătă-Duminică">Sâmbătă-Duminică</option>
+        <form id="planningForm" class="p-2.5 space-y-2.5" novalidate>
+          <div>
+            <label for="vehicleSelect" class="block font-bold text-[13px] mb-1">
+              Selectează vehiculul (Nr. Parc — Înmatriculare — Tip):
+            </label>
+            <select id="vehicleSelect" class="win-select w-full px-2 py-1 font-medium"></select>
+
+            <div class="win-sunken mt-1.5 px-2.5 py-1.5 bg-[#f7fafe] grid grid-cols-2 gap-2 text-[12.5px]">
+              <div>
+                <span class="text-[#44566b]">Nr. Înmatriculare:</span>
+                <strong id="infoPlate" class="font-mono-tabular text-[#102033] ml-1">—</strong>
+              </div>
+              <div>
+                <span class="text-[#44566b]">Tip vehicul:</span>
+                <strong id="infoType" class="text-[#102033] ml-1">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="statusSelect" class="block font-bold text-[13px] mb-1">
+              Stare planificare (Garaj / Rezerva / In traseu):
+            </label>
+            <select id="statusSelect" class="win-select w-full px-2 py-1 font-bold">
+              <option value="Garaj">Garaj</option>
+              <option value="Rezerva">Rezerva</option>
+              <option value="In traseu">In traseu</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label for="lineSelect" class="block font-bold text-[13px] mb-1">Linie:</label>
+              <select id="lineSelect" class="win-select w-full px-2 py-1">
+                <option value="">-- Neselectat --</option>
+                <option value="435">435</option>
+                <option value="470">470</option>
+                <option value="701">701</option>
               </select>
             </div>
-            <button id="btnExportPdf" type="button" class="btn-primary">Export Repartizare (.pdf)</button>
-            <button id="btnVectorMap" type="button">harta vectoriala</button>
-          </div>
-        </div>
 
-        <div class="workspace">
-          <div class="quick-tabs" role="tablist">
-            <button type="button" class="tab-btn active" data-tab-status="ALL">
-              Toate <span id="countAll" class="tab-count">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-status="În traseu">
-              În traseu <span id="countTraseu" class="tab-count">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-status="Garaj">
-              Garaj <span id="countGaraj" class="tab-count">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-status="Rezervă">
-              Rezervă <span id="countRezerva" class="tab-count">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-status="Defect / Revizie">
-              Defect / Revizie <span id="countDefect" class="tab-count">0</span>
-            </button>
-          </div>
-
-          <div id="inspectorStrip" class="inspector-strip">
-            <div class="inspector-info">
-              <span class="inspector-tag">SELECȚIE</span>
-              <span id="inspectorSummary" class="muted-text">Click pe un rând pentru acțiuni rapide.</span>
-            </div>
-            <div class="row-actions">
-              <button id="inspLineBtn" type="button" class="btn-sm" disabled>Schimbă linia</button>
-              <button id="inspDetailBtn" type="button" class="btn-sm" disabled>Vizualizare detaliata</button>
-              <button id="inspTourStatusBtn" type="button" class="btn-sm" disabled>Tur / Status</button>
-              <button id="inspDriverBtn" type="button" class="btn-sm" disabled>Repartizează șofer</button>
+            <div>
+              <label for="blockSelect" class="block font-bold text-[13px] mb-1">Bloc:</label>
+              <select id="blockSelect" class="win-select w-full px-2 py-1">
+                <option value="">-- Neselectat --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
             </div>
           </div>
 
-          <div class="panel">
-            <div class="filter-row">
-              <div class="filter-left">
-                <input id="searchBox" type="search" placeholder="Caută parc, model, linie, tur, șofer..." style="min-width: 245px;" />
-                <select id="filterLine">
-                  <option value="ALL">Toate liniile</option>
-                  <option value="N/A">N/A (Garaj)</option>
-                  <option value="435">Linia 435</option>
-                  <option value="470">Linia 470</option>
-                  <option value="701">Linia 701</option>
-                </select>
-                <select id="filterStatus">
-                  <option value="ALL">Toate statusurile</option>
-                  <option value="Garaj">Garaj</option>
-                  <option value="În traseu">În traseu</option>
-                  <option value="Rezervă">Rezervă</option>
-                  <option value="Defect / Revizie">Defect / Revizie</option>
-                </select>
-              </div>
-              <div class="filter-right">
-                <button id="btnClearFilters" type="button" class="btn-sm">Resetează filtrele</button>
-              </div>
+          <div class="win-sunken p-2.5 bg-[#f5f8fc] space-y-2">
+            <div class="font-bold text-[13px] text-[#15263a] border-b border-[#c5d0dd] pb-1">
+              Repartizare șoferi
             </div>
 
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width: 145px;">PARC / NR.</th>
-                    <th style="width: 175px;">MODEL</th>
-                    <th style="width: 75px;">LINIA</th>
-                    <th style="width: 75px;">TURUL</th>
-                    <th style="width: 125px;">STATUS</th>
-                    <th>ȘOFERI (SCHIMB 1 / SCHIMB 2)</th>
-                    <th style="width: 240px;">ACȚIUNI</th>
-                  </tr>
-                </thead>
-                <tbody id="fleetRows"></tbody>
-              </table>
+            <div>
+              <label for="shift1Select" class="block font-bold text-[12.5px] mb-1">Schimb 1:</label>
+              <select id="shift1Select" class="win-select w-full px-2 py-1"></select>
             </div>
+
+            <div>
+              <label for="shift2Select" class="block font-bold text-[12.5px] mb-1">Schimb 2:</label>
+              <select id="shift2Select" class="win-select w-full px-2 py-1"></select>
+            </div>
+          </div>
+
+          <div class="pt-1 flex flex-wrap items-center justify-between gap-2 border-t border-[#c5d0dd]">
+            <button
+              id="savePlanningBtn"
+              type="submit"
+              class="win-btn win-btn-success py-1 px-3.5 text-[13px] font-bold flex items-center gap-1.5"
+            >
+              <span>Salvează</span>
+            </button>
+            
+            <button
+              id="sendToGarageBtn"
+              type="button"
+              class="win-btn py-1 px-2.5 text-[13px] font-bold"
+            >
+              Garaj
+            </button>
+          </div>
+          
+
+        </form>
+      </section>
+
+      <section id="fleetPanel" class="win-frame lg:col-span-12 overflow-hidden flex flex-col">
+        <div class="win-titlebar px-2.5 py-1 flex flex-wrap items-center justify-between gap-2">
+          <span class="font-bold text-[13px]">Flotă Vehicule</span>
+          <span id="filteredCountLabel" class="font-mono-tabular text-[12.5px] text-[#dce9f7]">40 / 40 vehicule</span>
+        </div>
+
+        <div class="win-bar p-2 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2">
+          <div>
+            <label for="searchInput" class="block text-[12px] font-bold text-[#2d3e52] mb-0.5">
+              Căutare (parc, număr, tip, linie, bloc, șofer):
+            </label>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Ex: 9544, IF 44 PCH, Karsan, [108]..."
+              class="win-input w-full px-2 py-1"
+            />
+          </div>
+
+          <div>
+            <label for="filterStatusSelect" class="block text-[12px] font-bold text-[#2d3e52] mb-0.5">
+              Filtru stare:
+            </label>
+            <select id="filterStatusSelect" class="win-select w-full px-2 py-1">
+              <option value="ALL">Toate stările</option>
+              <option value="In traseu">In traseu</option>
+              <option value="Rezerva">Rezerva</option>
+              <option value="Garaj">Garaj</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="filterTypeSelect" class="block text-[12px] font-bold text-[#2d3e52] mb-0.5">
+              Filtru tip vehicul:
+            </label>
+            <select id="filterTypeSelect" class="win-select w-full px-2 py-1">
+              <option value="ALL">Toate tipurile</option>
+              <option value="Karsan e-ATA 12">Karsan e-ATA 12</option>
+              <option value="BMC Neocity 8.5M">BMC Neocity 8.5M</option>
+              <option value="Anadolu Isuzu Citiport">Anadolu Isuzu Citiport</option>
+              <option value="Karsan e-ATA 10">Karsan e-ATA 10</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="filterShiftSelect" class="block text-[12px] font-bold text-[#2d3e52] mb-0.5">
+              Filtru schimb (1 / 2):
+            </label>
+            <select id="filterShiftSelect" class="win-select w-full px-2 py-1">
+              <option value="ALL">Toate schimburile</option>
+              <option value="SHIFT1">Are șofer în Schimb 1</option>
+              <option value="SHIFT2">Are șofer în Schimb 2</option>
+              <option value="UNASSIGNED">Fără șofer repartizat</option>
+            </select>
           </div>
         </div>
 
-        <div class="status-bar">
-          <div id="statusBarLeft">Flotă încărcată: 0 vehicule</div>
-          <div id="statusBarRight">Program: Zile lucrătoare</div>
+        <div class="win-sunken m-2 mt-0 overflow-auto max-h-[600px]">
+          <table class="avl-table">
+            <thead>
+              <tr>
+                <th>Nr. Parc</th>
+                <th>Nr. Înmatriculare</th>
+                <th>Tip Vehicul</th>
+                <th>Stare</th>
+                <th>Linie</th>
+                <th>Bloc</th>
+                <th>Schimb 1</th>
+                <th>Schimb 2</th>
+                <th>Acțiune</th>
+              </tr>
+            </thead>
+            <tbody id="fleetTableBody"></tbody>
+          </table>
         </div>
-      </div>
-    </div>
-  </div>
+      </section>
+    </main>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div>
-        <div class="footer-brand">MNSys<sup>TM</sup> Fleet Management - Ecotrans STCM</div>
-        <div class="footer-notice">
-          Toate drepturile rezervate. Această aplicație este un sistem intern de dispecerat și evidență destinat exclusiv angajaților și dispecerilor autorizați Ecotrans STCM. Accesul neautorizat, copierea sau distribuirea datelor operaționale sunt interzise.
+    <footer class="win-frame overflow-hidden">
+      <div class="win-statusbar px-3 py-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <div class="text-[12.5px] font-bold text-[#142436]">
+          Platformă operațională destinată personalului angajat al Ecotrans STCM în cadrul mediului de simulare Roblox.
+        </div>
+        <div class="flex items-center gap-2.5 self-end sm:self-auto">
+          <span id="lastSyncClock" class="font-mono-tabular text-[12px] text-[#3c4e62]">Ultima actualizare: —</span>
+          <span id="appVersionBadge" class="version-badge">v0.0.23</span>
         </div>
       </div>
-      <div class="footer-right">
-        <div>Ecotrans STCM • Dispecerat Flotă</div>
-        <div>Uz intern — Personal autorizat</div>
-      </div>
-    </div>
-  </footer>
-
-  <div id="lineModal" class="modal-backdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="lineModalTitle" class="modal-title">Schimbă linia</h3>
-      </div>
-      <div class="modal-body">
-        <p id="lineModalSub" class="modal-sub"></p>
-        <div class="form-group">
-          <label for="lineSelect">Alege linia:</label>
-          <select id="lineSelect">
-            <option value="N/A">N/A (Fără linie / Garaj)</option>
-            <option value="435">435</option>
-            <option value="470">470</option>
-            <option value="701">701</option>
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button id="lineCancelBtn" type="button">Anulează</button>
-          <button id="lineSaveBtn" type="button" class="btn-primary">Salvează linia</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tourStatusModal" class="modal-backdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="tsModalTitle" class="modal-title">Tur &amp; Status</h3>
-      </div>
-      <div class="modal-body">
-        <p id="tsModalSub" class="modal-sub"></p>
-        <div class="form-group">
-          <label for="tourSelect">Turul:</label>
-          <select id="tourSelect"></select>
-        </div>
-        <div class="form-group">
-          <label for="statusSelect">Status vehicul:</label>
-          <select id="statusSelect">
-            <option value="Garaj">Garaj</option>
-            <option value="În traseu">În traseu</option>
-            <option value="Rezervă">Rezervă</option>
-            <option value="Defect / Revizie">Defect / Revizie</option>
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button id="tsCancelBtn" type="button">Anulează</button>
-          <button id="tsSaveBtn" type="button" class="btn-primary">Salvează</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="driverModal" class="modal-backdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="driverModalTitle" class="modal-title">Repartizează șoferi</h3>
-      </div>
-      <div class="modal-body">
-        <p id="driverModalSub" class="modal-sub"></p>
-        <div class="form-group">
-          <label for="driverShift1Select">Șofer schimb 1:</label>
-          <select id="driverShift1Select"></select>
-        </div>
-        <div class="form-group">
-          <label for="driverShift2Select">Șofer schimb 2:</label>
-          <select id="driverShift2Select"></select>
-        </div>
-        <div class="modal-footer">
-          <button id="driverClearBtn" type="button" class="btn-danger">Nerepartizat</button>
-          <button id="driverCancelBtn" type="button">Anulează</button>
-          <button id="driverSaveBtn" type="button" class="btn-primary">Salvează șoferii</button>
-        </div>
-      </div>
-    </div>
+    </footer>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
+      onAuthStateChanged,
       signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       getDatabase,
       ref,
-      get,
-      set,
-      onValue
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+      onValue,
+      set
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDTw3dWbmNvea1ioGltPi0oTKREXMjSJFo",
       authDomain: "avl-stcm.firebaseapp.com",
-      databaseURL: "https://avl-stcm-default-rtdb.europe-west1.firebasedatabase.app",
+      databaseURL: "https://avl-stcm-default-rtdb.firebaseio.com",
       projectId: "avl-stcm",
       storageBucket: "avl-stcm.firebasestorage.app",
       messagingSenderId: "31928551652",
@@ -831,671 +737,773 @@
       measurementId: "G-HSZ2MHYD8F"
     };
 
-    const TOURS_BY_LINE = {
-      "N/A": [""],
-      "435": ["", "T1", "T2", "T3", "T4"],
-      "470": ["", "T1", "T2"],
-      "701": ["", "T1"]
-    };
+    const APP_VERSION = "v0.0.23";
+    const DB_ASSIGNMENTS_PATH = "/dispatch/assignments";
+    const LOCAL_BACKUP_KEY = "mnsystm_dispatch_assignments_v0_0_23";
 
-    const PRESET_DRIVERS = [
-      "Void", "MN", "Vlad", "Cristian", "David", "Clau", "Damian",
-      "TransportEd", "Nosiv", "Miti", "D4vid", "Stefan", "Yanis",
-      "Davidu1", "Cezar", "Dvx", "Cristi"
+    const DRIVERS = [
+      "[108] Void",
+      "[267] MN",
+      "[304] Vlad",
+      "[493] Cristian",
+      "[193] David",
+      "[440] Clau",
+      "[219] Damian",
+      "[703] TransportEd",
+      "[227] Nosiv",
+      "[265] Miti",
+      "[277] D4vid",
+      "[303] Stefan",
+      "[552] Yanis",
+      "[530] Davidu1",
+      "[189] Cezar",
+      "[250] Dvx"
     ];
 
-    const DEFAULT_FLEET = [
-      { id: "IF 24 PCH / 9524", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 1 },
-      { id: "IF 25 PCH / 9525", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 2 },
-      { id: "IF 42 PCH / 9542", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 3 },
-      { id: "IF 41 PCH / 9541", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 4 },
-      { id: "IF 38 PCH / 9538", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 5 },
-      { id: "IF 40 PCH / 9540", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 6 },
-      { id: "IF 39 PCH / 9539", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 7 },
-      { id: "IF 37 PCH / 9537", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 8 },
-      { id: "IF 35 PCH / 9535", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 9 },
-      { id: "IF 34 PCH / 9534", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 10 },
-      { id: "IF 32 PCH / 9532", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 11 },
-      { id: "IF 31 PCH / 9531", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 12 },
-      { id: "IF 36 PCH / 9536", model: "Karsan e-ATA 12", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 13 },
-      { id: "IF 41 TCM / 9428", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 14 },
-      { id: "IF 42 TCM / 9429", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 15 },
-      { id: "IF 49 TCM / 9430", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 16 },
-      { id: "IF 56 TCM / 9437", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 17 },
-      { id: "IF 57 TCM / 9438", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 18 },
-      { id: "IF 58 TCM / 9439", model: "Anadolu Isuzu Citiport", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 19 },
-      { id: "IF 44 PCH / 9444", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 20 },
-      { id: "IF 45 PCH / 9445", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 21 },
-      { id: "IF 46 PCH / 9446", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 22 },
-      { id: "IF 47 PCH / 9447", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 23 },
-      { id: "IF 48 PCH / 9448", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 24 },
-      { id: "IF 49 PCH / 9449", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 25 },
-      { id: "IF 50 PCH / 9450", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 26 },
-      { id: "IF 51 PCH / 9451", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 27 },
-      { id: "IF 52 PCH / 9452", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 28 },
-      { id: "IF 53 PCH / 9453", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 29 },
-      { id: "IF 54 PCH / 9454", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 30 },
-      { id: "IF 55 PCH / 9455", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 31 },
-      { id: "IF 56 PCH / 9456", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 32 },
-      { id: "IF 57 PCH / 9457", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 33 },
-      { id: "IF 58 PCH / 9458", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 34 },
-      { id: "IF 59 PCH / 9459", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 35 },
-      { id: "IF 60 PCH / 9460", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 36 },
-      { id: "IF 61 PCH / 9461", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 37 },
-      { id: "IF 62 PCH / 9462", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 38 },
-      { id: "IF 63 PCH / 9463", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 39 },
-      { id: "IF 64 PCH / 9464", model: "Karsan e-ATA 10", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 40 },
-      { id: "IF 40 TCM / 9427", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 41 },
-      { id: "IF 43 TCM / 9430", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 42 },
-      { id: "IF 45 TCM / 9431", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 43 },
-      { id: "IF 46 TCM / 9432", model: "BMC Neocity 8.5M", line: "N/A", tour: "", status: "Garaj", driver1: "", driver2: "", sort_order: 44 }
+    const VEHICLES = [
+      { park: "9524", plate: "IF 24 PCH", type: "Karsan e-ATA 12" },
+      { park: "9525", plate: "IF 25 PCH", type: "Karsan e-ATA 12" },
+      { park: "9542", plate: "IF 42 PCH", type: "Karsan e-ATA 12" },
+      { park: "9541", plate: "IF 41 PCH", type: "Karsan e-ATA 12" },
+      { park: "9538", plate: "IF 38 PCH", type: "Karsan e-ATA 12" },
+      { park: "9540", plate: "IF 40 PCH", type: "Karsan e-ATA 12" },
+      { park: "9539", plate: "IF 39 PCH", type: "Karsan e-ATA 12" },
+      { park: "9537", plate: "IF 37 PCH", type: "Karsan e-ATA 12" },
+      { park: "9535", plate: "IF 35 PCH", type: "Karsan e-ATA 12" },
+      { park: "9534", plate: "IF 34 PCH", type: "Karsan e-ATA 12" },
+      { park: "9532", plate: "IF 32 PCH", type: "Karsan e-ATA 12" },
+      { park: "9531", plate: "IF 31 PCH", type: "Karsan e-ATA 12" },
+      { park: "9536", plate: "IF 36 PCH", type: "Karsan e-ATA 12" },
+      { park: "9428", plate: "IF 41 TCM", type: "BMC Neocity 8.5M" },
+      { park: "9429", plate: "IF 42 TCM", type: "BMC Neocity 8.5M" },
+      { park: "9430", plate: "IF 49 TCM", type: "Anadolu Isuzu Citiport" },
+      { park: "9437", plate: "IF 56 TCM", type: "Anadolu Isuzu Citiport" },
+      { park: "9438", plate: "IF 57 TCM", type: "Anadolu Isuzu Citiport" },
+      { park: "9439", plate: "IF 58 TCM", type: "Anadolu Isuzu Citiport" },
+      { park: "9544", plate: "IF 44 PCH", type: "Karsan e-ATA 10" },
+      { park: "9545", plate: "IF 45 PCH", type: "Karsan e-ATA 10" },
+      { park: "9546", plate: "IF 46 PCH", type: "Karsan e-ATA 10" },
+      { park: "9547", plate: "IF 47 PCH", type: "Karsan e-ATA 10" },
+      { park: "9548", plate: "IF 48 PCH", type: "Karsan e-ATA 10" },
+      { park: "9549", plate: "IF 49 PCH", type: "Karsan e-ATA 10" },
+      { park: "9550", plate: "IF 50 PCH", type: "Karsan e-ATA 10" },
+      { park: "9551", plate: "IF 51 PCH", type: "Karsan e-ATA 10" },
+      { park: "9552", plate: "IF 52 PCH", type: "Karsan e-ATA 10" },
+      { park: "9553", plate: "IF 53 PCH", type: "Karsan e-ATA 10" },
+      { park: "9554", plate: "IF 54 PCH", type: "Karsan e-ATA 10" },
+      { park: "9555", plate: "IF 55 PCH", type: "Karsan e-ATA 10" },
+      { park: "9556", plate: "IF 56 PCH", type: "Karsan e-ATA 10" },
+      { park: "9557", plate: "IF 57 PCH", type: "Karsan e-ATA 10" },
+      { park: "9558", plate: "IF 58 PCH", type: "Karsan e-ATA 10" },
+      { park: "9559", plate: "IF 59 PCH", type: "Karsan e-ATA 10" },
+      { park: "9560", plate: "IF 60 PCH", type: "Karsan e-ATA 10" },
+      { park: "9561", plate: "IF 61 PCH", type: "Karsan e-ATA 10" },
+      { park: "9562", plate: "IF 62 PCH", type: "Karsan e-ATA 10" },
+      { park: "9563", plate: "IF 63 PCH", type: "Karsan e-ATA 10" },
+      { park: "9564", plate: "IF 64 PCH", type: "Karsan e-ATA 10" }
     ];
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    const fleetRef = ref(db, "fleet");
-    const scheduleTypeRef = ref(db, "scheduleType");
+    function createDefaultAssignments() {
+      const map = {};
+      for (const v of VEHICLES) {
+        map[v.park] = {
+          status: "Garaj",
+          line: "",
+          block: "",
+          shift1: "",
+          shift2: "",
+          updatedAt: null,
+          updatedBy: ""
+        };
+      }
+      return map;
+    }
 
-    let fleet = [];
-    let scheduleType = "Zile lucrătoare";
-    let activeVehicleId = null;
-    let selectedRowId = null;
-    let unsubFleet = null;
-    let unsubSchedule = null;
+    let appInstance = null;
+    let authInstance = null;
+    let dbInstance = null;
+    let currentUser = null;
+    let assignments = createDefaultAssignments();
+    let activePark = VEHICLES[0].park;
+    let unsubscribeAssignments = null;
+    let isPlanningPanelOpen = false;
 
-    const loginView = document.getElementById("loginView");
-    const mainView = document.getElementById("mainView");
+    const loginScreen = document.getElementById("loginScreen");
+    const dispatchApp = document.getElementById("dispatchApp");
     const loginForm = document.getElementById("loginForm");
     const loginEmail = document.getElementById("loginEmail");
-    const loginPass = document.getElementById("loginPass");
-    const loginSubmit = document.getElementById("loginSubmit");
-    const loginErr = document.getElementById("loginErr");
-    const sessionMeta = document.getElementById("sessionMeta");
-    const scheduleTypeSelect = document.getElementById("scheduleTypeSelect");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginSubmitBtn = document.getElementById("loginSubmitBtn");
+    const loginAlert = document.getElementById("loginAlert");
+    const authInitStatus = document.getElementById("authInitStatus");
 
-    const fleetRows = document.getElementById("fleetRows");
-    const searchBox = document.getElementById("searchBox");
-    const filterLine = document.getElementById("filterLine");
-    const filterStatus = document.getElementById("filterStatus");
-    const btnClearFilters = document.getElementById("btnClearFilters");
+    const syncLed = document.getElementById("syncLed");
+    const syncStatusText = document.getElementById("syncStatusText");
+    const sessionUserLabel = document.getElementById("sessionUserLabel");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const lastSyncClock = document.getElementById("lastSyncClock");
+    const appVersionBadge = document.getElementById("appVersionBadge");
 
-    const countAll = document.getElementById("countAll");
-    const countTraseu = document.getElementById("countTraseu");
-    const countGaraj = document.getElementById("countGaraj");
-    const countRezerva = document.getElementById("countRezerva");
-    const countDefect = document.getElementById("countDefect");
+    const statusBanner = document.getElementById("statusBanner");
+    const statusBannerText = document.getElementById("statusBannerText");
+    const dismissBannerBtn = document.getElementById("dismissBannerBtn");
 
-    const inspectorSummary = document.getElementById("inspectorSummary");
-    const inspLineBtn = document.getElementById("inspLineBtn");
-    const inspDetailBtn = document.getElementById("inspDetailBtn");
-    const inspTourStatusBtn = document.getElementById("inspTourStatusBtn");
-    const inspDriverBtn = document.getElementById("inspDriverBtn");
+    const planningPanel = document.getElementById("planningPanel");
+    const fleetPanel = document.getElementById("fleetPanel");
+    const closePlanningBtn = document.getElementById("closePlanningBtn");
+    const reopenPlanningBtn = document.getElementById("reopenPlanningBtn");
 
-    const statusBarLeft = document.getElementById("statusBarLeft");
-    const statusBarRight = document.getElementById("statusBarRight");
-
-    const lineModal = document.getElementById("lineModal");
-    const lineModalTitle = document.getElementById("lineModalTitle");
-    const lineModalSub = document.getElementById("lineModalSub");
-    const lineSelect = document.getElementById("lineSelect");
-    const lineCancelBtn = document.getElementById("lineCancelBtn");
-    const lineSaveBtn = document.getElementById("lineSaveBtn");
-
-    const tourStatusModal = document.getElementById("tourStatusModal");
-    const tsModalTitle = document.getElementById("tsModalTitle");
-    const tsModalSub = document.getElementById("tsModalSub");
-    const tourSelect = document.getElementById("tourSelect");
+    const planningForm = document.getElementById("planningForm");
+    const vehicleSelect = document.getElementById("vehicleSelect");
+    const selectedParkBadge = document.getElementById("selectedParkBadge");
+    const infoPlate = document.getElementById("infoPlate");
+    const infoType = document.getElementById("infoType");
     const statusSelect = document.getElementById("statusSelect");
-    const tsCancelBtn = document.getElementById("tsCancelBtn");
-    const tsSaveBtn = document.getElementById("tsSaveBtn");
+    const lineSelect = document.getElementById("lineSelect");
+    const blockSelect = document.getElementById("blockSelect");
+    const shift1Select = document.getElementById("shift1Select");
+    const shift2Select = document.getElementById("shift2Select");
+    const draftHint = document.getElementById("draftHint");
+    const sendToGarageBtn = document.getElementById("sendToGarageBtn");
 
-    const driverModal = document.getElementById("driverModal");
-    const driverModalTitle = document.getElementById("driverModalTitle");
-    const driverModalSub = document.getElementById("driverModalSub");
-    const driverShift1Select = document.getElementById("driverShift1Select");
-    const driverShift2Select = document.getElementById("driverShift2Select");
-    const driverClearBtn = document.getElementById("driverClearBtn");
-    const driverCancelBtn = document.getElementById("driverCancelBtn");
-    const driverSaveBtn = document.getElementById("driverSaveBtn");
+    const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+    const clearVehicleAssignmentBtn = document.getElementById("clearVehicleAssignmentBtn");
 
-    function stripDiacritics(str) {
-      return String(str ?? "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/ș/g, "s").replace(/Ș/g, "S")
-        .replace(/ț/g, "t").replace(/Ț/g, "T")
-        .replace(/ă/g, "a").replace(/Ă/g, "A")
-        .replace(/â/g, "a").replace(/Â/g, "A")
-        .replace(/î/g, "i").replace(/Î/g, "I");
+    const searchInput = document.getElementById("searchInput");
+    const filterStatusSelect = document.getElementById("filterStatusSelect");
+    const filterTypeSelect = document.getElementById("filterTypeSelect");
+    const filterShiftSelect = document.getElementById("filterShiftSelect");
+    const fleetTableBody = document.getElementById("fleetTableBody");
+    const filteredCountLabel = document.getElementById("filteredCountLabel");
+
+    const countInTraseu = document.getElementById("countInTraseu");
+    const countRezerva = document.getElementById("countRezerva");
+    const countGaraj = document.getElementById("countGaraj");
+    const countTotal = document.getElementById("countTotal");
+
+    function setPlanningPanelOpen(open, focusForm = false) {
+      isPlanningPanelOpen = Boolean(open);
+      if (isPlanningPanelOpen) {
+        planningPanel.classList.remove("hidden");
+        fleetPanel.classList.remove("lg:col-span-12");
+        fleetPanel.classList.add("lg:col-span-8");
+        reopenPlanningBtn.classList.add("hidden");
+        if (focusForm) {
+          vehicleSelect.focus();
+        }
+      } else {
+        planningPanel.classList.add("hidden");
+        fleetPanel.classList.remove("lg:col-span-8");
+        fleetPanel.classList.add("lg:col-span-12");
+        reopenPlanningBtn.classList.remove("hidden");
+      }
     }
 
-    function escapeHtml(s) {
-      return String(s ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
+    function showBanner(text, type = "info") {
+      statusBannerText.textContent = text;
+      statusBanner.classList.remove("hidden");
+      if (type === "error") {
+        statusBanner.style.background = "#fdeceb";
+        statusBannerText.style.color = "#831810";
+      } else if (type === "success") {
+        statusBanner.style.background = "#e7f7ec";
+        statusBannerText.style.color = "#0f431f";
+      } else {
+        statusBanner.style.background = "#eef4fb";
+        statusBannerText.style.color = "#15283e";
+      }
     }
 
-    function normalizeFleet(raw) {
-      if (!raw) return [];
-      const arr = Array.isArray(raw) ? raw : Object.values(raw);
-      return arr
-        .filter((u) => u && u.id)
-        .map((u, idx) => {
-          let line = String(u.line ?? "N/A").trim();
-          if (line === "0" || !line) line = "N/A";
-          const legacyDriver = String(u.driver || "").trim();
-          const d1 = String(u.driver1 ?? legacyDriver ?? "").trim();
-          const d2 = String(u.driver2 ?? "").trim();
-          const rawStatus = String(u.status || "Garaj").trim();
-          const status = rawStatus === "La depou" ? "Garaj" : rawStatus;
-          return {
-            id: String(u.id).trim(),
-            model: String(u.model || "").trim(),
+    function hideBanner() {
+      statusBanner.classList.add("hidden");
+    }
+
+    function showLoginAlert(text) {
+      loginAlert.textContent = text;
+      loginAlert.classList.remove("hidden");
+    }
+
+    function hideLoginAlert() {
+      loginAlert.classList.add("hidden");
+    }
+
+    function setSyncState(ledColor, labelText) {
+      syncLed.className = "led";
+      if (ledColor === "green") syncLed.classList.add("led-green");
+      else if (ledColor === "amber") syncLed.classList.add("led-amber");
+      else if (ledColor === "red") syncLed.classList.add("led-red");
+      else syncLed.classList.add("led-gray");
+      syncStatusText.textContent = labelText;
+    }
+
+    function updateClockLabel() {
+      lastSyncClock.textContent = `Ultima actualizare: ${new Date().toLocaleTimeString("ro-RO")}`;
+    }
+
+    function saveLocalBackup(dataObj) {
+      try {
+        localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(dataObj));
+      } catch (err) {
+        console.warn("Nu s-a putut salva în localStorage:", err);
+      }
+    }
+
+    function loadLocalBackup() {
+      try {
+        const raw = localStorage.getItem(LOCAL_BACKUP_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        const normalized = createDefaultAssignments();
+        for (const v of VEHICLES) {
+          if (parsed && parsed[v.park]) {
+            normalized[v.park] = {
+              ...normalized[v.park],
+              ...parsed[v.park]
+            };
+          }
+        }
+        return normalized;
+      } catch (err) {
+        console.warn("Eroare la citirea localStorage:", err);
+        return null;
+      }
+    }
+
+    function populateDropdowns() {
+      vehicleSelect.innerHTML = "";
+      for (const v of VEHICLES) {
+        const opt = document.createElement("option");
+        opt.value = v.park;
+        opt.textContent = `${v.park} — ${v.plate} — ${v.type}`;
+        vehicleSelect.appendChild(opt);
+      }
+
+      const populateShiftSelect = (selectEl) => {
+        selectEl.innerHTML = "";
+        const emptyOpt = document.createElement("option");
+        emptyOpt.value = "";
+        emptyOpt.textContent = "-- Neselectat --";
+        selectEl.appendChild(emptyOpt);
+
+        for (const driver of DRIVERS) {
+          const opt = document.createElement("option");
+          opt.value = driver;
+          opt.textContent = driver;
+          selectEl.appendChild(opt);
+        }
+      };
+
+      populateShiftSelect(shift1Select);
+      populateShiftSelect(shift2Select);
+    }
+
+    const LINE_BLOCKS = {
+      "435": ["1", "2", "3", "4"],
+      "470": ["1"],
+      "701": ["1"]
+    };
+
+    const PRESET_LINES = ["435", "470", "701"];
+
+    function syncBlockOptionsForLine(lineVal, desiredBlock = "") {
+      const allowedBlocks = LINE_BLOCKS[lineVal] || ["1", "2", "3", "4"];
+      const currentVal = desiredBlock !== undefined ? desiredBlock : blockSelect.value;
+
+      blockSelect.innerHTML = "";
+      const emptyOpt = document.createElement("option");
+      emptyOpt.value = "";
+      emptyOpt.textContent = "-- Neselectat --";
+      blockSelect.appendChild(emptyOpt);
+
+      for (const b of allowedBlocks) {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        blockSelect.appendChild(opt);
+      }
+
+      blockSelect.value = allowedBlocks.includes(currentVal) ? currentVal : "";
+    }
+
+    function getResolvedLineValue() {
+      return PRESET_LINES.includes(lineSelect.value) ? lineSelect.value : "";
+    }
+
+    function getResolvedBlockValue() {
+      const allowedBlocks = LINE_BLOCKS[getResolvedLineValue()] || ["1", "2", "3", "4"];
+      return allowedBlocks.includes(blockSelect.value) ? blockSelect.value : "";
+    }
+
+    function loadVehicleIntoForm(parkNumber) {
+      const veh = VEHICLES.find((item) => item.park === parkNumber) || VEHICLES[0];
+      activePark = veh.park;
+      vehicleSelect.value = activePark;
+      selectedParkBadge.textContent = veh.park;
+      infoPlate.textContent = veh.plate;
+      infoType.textContent = veh.type;
+
+      const rec = assignments[activePark] || createDefaultAssignments()[activePark];
+      statusSelect.value = ["Garaj", "Rezerva", "In traseu"].includes(rec.status)
+        ? rec.status
+        : "Garaj";
+
+      const validLine = PRESET_LINES.includes(rec.line || "") ? (rec.line || "") : "";
+      lineSelect.value = validLine;
+      syncBlockOptionsForLine(validLine, rec.block || "");
+
+      shift1Select.value = DRIVERS.includes(rec.shift1 || "") ? rec.shift1 : "";
+      shift2Select.value = DRIVERS.includes(rec.shift2 || "") ? rec.shift2 : "";
+    }
+
+    function renderCounts() {
+      let inTraseu = 0;
+      let rezerva = 0;
+      let garaj = 0;
+
+      for (const v of VEHICLES) {
+        const st = assignments[v.park]?.status || "Garaj";
+        if (st === "In traseu") inTraseu += 1;
+        else if (st === "Rezerva") rezerva += 1;
+        else garaj += 1;
+      }
+
+      countInTraseu.textContent = String(inTraseu);
+      countRezerva.textContent = String(rezerva);
+      countGaraj.textContent = String(garaj);
+      countTotal.textContent = String(VEHICLES.length);
+    }
+
+    function getStatusBadgeHtml(status) {
+      if (status === "In traseu") {
+        return `<span class="badge-status badge-traseu"><span class="led led-green"></span>In traseu</span>`;
+      }
+      if (status === "Rezerva") {
+        return `<span class="badge-status badge-rezerva"><span class="led led-amber"></span>Rezerva</span>`;
+      }
+      return `<span class="badge-status badge-garaj"><span class="led led-gray"></span>Garaj</span>`;
+    }
+
+    function renderFleetTable() {
+      const query = searchInput.value.trim().toLowerCase();
+      const statusFilter = filterStatusSelect.value;
+      const typeFilter = filterTypeSelect.value;
+      const shiftFilter = filterShiftSelect.value;
+
+      const filtered = VEHICLES.filter((veh) => {
+        const rec = assignments[veh.park] || {};
+        const st = rec.status || "Garaj";
+        const line = rec.line || "";
+        const block = rec.block || "";
+        const s1 = rec.shift1 || "";
+        const s2 = rec.shift2 || "";
+
+        if (statusFilter !== "ALL" && st !== statusFilter) return false;
+        if (typeFilter !== "ALL" && veh.type !== typeFilter) return false;
+
+        if (shiftFilter === "SHIFT1" && !s1) return false;
+        if (shiftFilter === "SHIFT2" && !s2) return false;
+        if (shiftFilter === "UNASSIGNED" && (s1 || s2)) return false;
+
+        if (query) {
+          const hay = [
+            veh.park,
+            veh.plate,
+            veh.type,
+            st,
             line,
-            tour: String(u.tour || "").trim(),
-            status,
-            driver1: d1,
-            driver2: d2,
-            sort_order: Number.isFinite(Number(u.sort_order)) ? Number(u.sort_order) : idx + 1
-          };
-        })
-        .sort((a, b) => a.sort_order - b.sort_order || a.id.localeCompare(b.id));
-    }
+            block,
+            s1,
+            s2
+          ]
+            .join(" ")
+            .toLowerCase();
+          if (!hay.includes(query)) return false;
+        }
 
-    async function persistFleet(nextFleet) {
-      try {
-        await auth.authStateReady();
-        const ordered = nextFleet.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
-        await set(fleetRef, ordered);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function persistScheduleType(type) {
-      try {
-        await auth.authStateReady();
-        await set(scheduleTypeRef, type);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    function statusPillClass(status) {
-      if (status === "În traseu") return "pill pill-traseu";
-      if (status === "Rezervă") return "pill pill-rezerva";
-      if (status === "Defect / Revizie") return "pill pill-defect";
-      return "pill pill-garaj";
-    }
-
-    function formatDriversHtml(u) {
-      const s1 = u.driver1 ? escapeHtml(u.driver1) : `<span class="muted-text">Nerepartizat</span>`;
-      const s2 = u.driver2 ? escapeHtml(u.driver2) : `<span class="muted-text">Nerepartizat</span>`;
-      return `
-        <span class="shift-line"><span class="shift-label">Schimb 1:</span> ${s1}</span>
-        <span class="shift-line"><span class="shift-label">Schimb 2:</span> ${s2}</span>
-      `;
-    }
-
-    function formatDriversPdf(u) {
-      const s1 = u.driver1 ? stripDiacritics(u.driver1) : "Nerepartizat";
-      const s2 = u.driver2 ? stripDiacritics(u.driver2) : "Nerepartizat";
-      return `Schimb 1: ${s1} | Schimb 2: ${s2}`;
-    }
-
-    function syncTabActiveState() {
-      const current = filterStatus.value;
-      document.querySelectorAll(".tab-btn").forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.tabStatus === current);
+        return true;
       });
+
+      fleetTableBody.innerHTML = "";
+
+      if (filtered.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 9;
+        td.className = "text-center py-4 text-[#45566b] font-bold";
+        td.textContent = "Niciun vehicul nu corespunde filtrelor selectate.";
+        tr.appendChild(td);
+        fleetTableBody.appendChild(tr);
+      } else {
+        for (const veh of filtered) {
+          const rec = assignments[veh.park] || {};
+          const st = rec.status || "Garaj";
+          const tr = document.createElement("tr");
+          if (veh.park === activePark && isPlanningPanelOpen) {
+            tr.classList.add("is-selected");
+          }
+
+          tr.innerHTML = `
+            <td class="font-mono-tabular font-bold text-[#112236]">${veh.park}</td>
+            <td class="font-mono-tabular">${veh.plate}</td>
+            <td>${veh.type}</td>
+            <td>${getStatusBadgeHtml(st)}</td>
+            <td class="font-mono-tabular">${rec.line ? rec.line : "<span class='text-[#7c8c9e]'>—</span>"}</td>
+            <td>${rec.block ? rec.block : "<span class='text-[#7c8c9e]'>—</span>"}</td>
+            <td class="font-mono-tabular text-[12.5px]">${rec.shift1 ? rec.shift1 : "<span class='text-[#7c8c9e]'>-- Neselectat --</span>"}</td>
+            <td class="font-mono-tabular text-[12.5px]">${rec.shift2 ? rec.shift2 : "<span class='text-[#7c8c9e]'>-- Neselectat --</span>"}</td>
+            <td>
+              <div class="flex flex-wrap items-center gap-1">
+                <button type="button" data-select-park="${veh.park}" class="win-btn px-2 py-0.5 text-[12px] font-bold">
+                  Editează
+                </button>
+                <button type="button" data-detail-park="${veh.park}" class="win-btn px-2 py-0.5 text-[12px] font-bold">
+                  Vizualizare detaliată
+                </button>
+              </div>
+            </td>
+          `;
+
+          tr.addEventListener("click", (ev) => {
+            if (ev.target.closest("button")) return;
+            loadVehicleIntoForm(veh.park);
+            renderFleetTable();
+          });
+
+          tr.addEventListener("dblclick", (ev) => {
+            if (ev.target.closest("button")) return;
+            loadVehicleIntoForm(veh.park);
+            setPlanningPanelOpen(true, false);
+            renderFleetTable();
+          });
+
+          const editBtn = tr.querySelector("button[data-select-park]");
+          editBtn.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            loadVehicleIntoForm(veh.park);
+            setPlanningPanelOpen(true, false);
+            renderFleetTable();
+          });
+
+          const detailBtn = tr.querySelector("button[data-detail-park]");
+          detailBtn.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+          });
+
+          fleetTableBody.appendChild(tr);
+        }
+      }
+
+      filteredCountLabel.textContent = `${filtered.length} / ${VEHICLES.length} vehicule`;
+      renderCounts();
     }
 
-    function refreshInspector() {
-      const unit = fleet.find((u) => u.id === selectedRowId) || null;
-      const enabled = Boolean(unit);
-      inspLineBtn.disabled = !enabled;
-      inspDetailBtn.disabled = !enabled;
-      inspTourStatusBtn.disabled = !enabled;
-      inspDriverBtn.disabled = !enabled;
+    async function persistAssignmentsToFirebase(nextAssignments) {
+      saveLocalBackup(nextAssignments);
 
-      if (!unit) {
-        inspectorSummary.className = "muted-text";
-        inspectorSummary.textContent = "Click pe un rând pentru acțiuni rapide.";
+      if (!dbInstance || !currentUser) {
+        setSyncState("amber", "Salvat local");
+        updateClockLabel();
+        return { syncedRemote: false, reason: "local" };
+      }
+
+      setSyncState("amber", "Se salvează în cloud...");
+
+      try {
+        const assignmentsRef = ref(dbInstance, DB_ASSIGNMENTS_PATH);
+        await set(assignmentsRef, nextAssignments);
+        setSyncState("green", "Sincronizat Firebase RTDB");
+        updateClockLabel();
+        return { syncedRemote: true };
+      } catch (err) {
+        console.warn("Eroare la scrierea în Firebase Realtime Database:", err);
+        setSyncState("amber", "Salvat local");
+        updateClockLabel();
+        return { syncedRemote: false, reason: err?.code || "error" };
+      }
+    }
+
+    async function commitPlanningForm(nextRecord, closeAfterSave = true) {
+      const parkNumber = vehicleSelect.value || activePark;
+      const operatorName = currentUser?.email || "Operator";
+
+      assignments = {
+        ...assignments,
+        [parkNumber]: {
+          ...nextRecord,
+          updatedAt: new Date().toISOString(),
+          updatedBy: operatorName
+        }
+      };
+
+      saveLocalBackup(assignments);
+      renderFleetTable();
+
+      await persistAssignmentsToFirebase(assignments);
+
+      if (closeAfterSave) {
+        setPlanningPanelOpen(false, false);
+        showBanner(`Planificarea pentru parcul ${parkNumber} a fost salvată.`, "success");
+      }
+    }
+
+    function attachRealtimeListener() {
+      if (typeof unsubscribeAssignments === "function") {
+        unsubscribeAssignments();
+        unsubscribeAssignments = null;
+      }
+
+      const cached = loadLocalBackup();
+      if (cached) {
+        assignments = cached;
+        loadVehicleIntoForm(activePark);
+        renderFleetTable();
+      }
+
+      if (!dbInstance || !currentUser) {
+        setSyncState("amber", "Mod Local");
+        updateClockLabel();
         return;
       }
 
-      const d1 = unit.driver1 || "Nerepartizat";
-      const d2 = unit.driver2 || "Nerepartizat";
-      inspectorSummary.className = "";
-      inspectorSummary.innerHTML =
-        `<strong>${escapeHtml(unit.id)}</strong> (${escapeHtml(unit.model)}) • ` +
-        `Linia: <strong>${escapeHtml(unit.line || "N/A")}</strong> • ` +
-        `Tur: <strong>${escapeHtml(unit.tour || "—")}</strong> • ` +
-        `Status: <strong>${escapeHtml(unit.status)}</strong> • ` +
-        `S1/S2: <strong>${escapeHtml(d1)}</strong> / <strong>${escapeHtml(d2)}</strong>`;
-    }
+      setSyncState("amber", "Conectare /dispatch/assignments...");
 
-    function refreshCountsAndStatusBar(visibleCount) {
-      countAll.textContent = String(fleet.length);
-      countTraseu.textContent = String(fleet.filter((u) => u.status === "În traseu").length);
-      countGaraj.textContent = String(fleet.filter((u) => u.status === "Garaj").length);
-      countRezerva.textContent = String(fleet.filter((u) => u.status === "Rezervă").length);
-      countDefect.textContent = String(fleet.filter((u) => u.status === "Defect / Revizie").length);
-
-      statusBarLeft.textContent = `Afișate: ${visibleCount} din ${fleet.length} vehicule`;
-      statusBarRight.textContent = `Program: ${scheduleType}`;
-    }
-
-    function renderFleet() {
-      syncTabActiveState();
-
-      const q = searchBox.value.trim().toLowerCase();
-      const lf = filterLine.value;
-      const sf = filterStatus.value;
-
-      const list = fleet.filter((u) => {
-        const okLine = lf === "ALL" || u.line === lf;
-        const okStatus = sf === "ALL" || u.status === sf;
-        const okQuery =
-          !q ||
-          u.id.toLowerCase().includes(q) ||
-          u.model.toLowerCase().includes(q) ||
-          u.line.toLowerCase().includes(q) ||
-          u.tour.toLowerCase().includes(q) ||
-          u.driver1.toLowerCase().includes(q) ||
-          u.driver2.toLowerCase().includes(q);
-        return okLine && okStatus && okQuery;
-      });
-
-      refreshCountsAndStatusBar(list.length);
-      refreshInspector();
-      fleetRows.innerHTML = "";
-
-      for (const u of list) {
-        const tr = document.createElement("tr");
-        if (u.id === selectedRowId) tr.classList.add("selected");
-        tr.addEventListener("click", (e) => {
-          if (e.target.closest("button")) return;
-          selectedRowId = u.id;
-          renderFleet();
-        });
-
-        const tdParc = document.createElement("td");
-        tdParc.innerHTML = `<strong>${escapeHtml(u.id)}</strong>`;
-
-        const tdModel = document.createElement("td");
-        tdModel.textContent = u.model;
-
-        const tdLine = document.createElement("td");
-        tdLine.innerHTML = `<strong>${escapeHtml(u.line || "N/A")}</strong>`;
-
-        const tdTour = document.createElement("td");
-        tdTour.innerHTML = u.tour ? `<strong>${escapeHtml(u.tour)}</strong>` : `<span class="muted-text">—</span>`;
-
-        const tdStatus = document.createElement("td");
-        tdStatus.innerHTML = `<span class="${statusPillClass(u.status)}">${escapeHtml(u.status)}</span>`;
-
-        const tdDriver = document.createElement("td");
-        tdDriver.innerHTML = formatDriversHtml(u);
-
-        const tdAct = document.createElement("td");
-        const actBox = document.createElement("div");
-        actBox.className = "row-actions";
-
-        const btnLine = document.createElement("button");
-        btnLine.type = "button";
-        btnLine.className = "btn-sm";
-        btnLine.textContent = "Schimbă linia";
-        btnLine.addEventListener("click", () => {
-          selectedRowId = u.id;
-          openLineModal(u);
-        });
-
-        const btnTourStatus = document.createElement("button");
-        btnTourStatus.type = "button";
-        btnTourStatus.className = "btn-sm";
-        btnTourStatus.textContent = "Tur / Status";
-        btnTourStatus.addEventListener("click", () => {
-          selectedRowId = u.id;
-          openTourStatusModal(u);
-        });
-
-        const btnDriver = document.createElement("button");
-        btnDriver.type = "button";
-        btnDriver.className = "btn-sm";
-        btnDriver.textContent = "Repartizează șofer";
-        btnDriver.addEventListener("click", () => {
-          selectedRowId = u.id;
-          openDriverModal(u);
-        });
-
-        actBox.append(btnLine, btnTourStatus, btnDriver);
-        tdAct.appendChild(actBox);
-        tr.append(tdParc, tdModel, tdLine, tdTour, tdStatus, tdDriver, tdAct);
-        fleetRows.appendChild(tr);
+      try {
+        const assignmentsRef = ref(dbInstance, DB_ASSIGNMENTS_PATH);
+        unsubscribeAssignments = onValue(
+          assignmentsRef,
+          (snapshot) => {
+            const base = createDefaultAssignments();
+            if (snapshot.exists()) {
+              const remoteVal = snapshot.val() || {};
+              for (const v of VEHICLES) {
+                if (remoteVal[v.park]) {
+                  base[v.park] = { ...base[v.park], ...remoteVal[v.park] };
+                }
+              }
+            } else {
+              const localFallback = loadLocalBackup();
+              if (localFallback) {
+                for (const v of VEHICLES) {
+                  base[v.park] = { ...base[v.park], ...localFallback[v.park] };
+                }
+              }
+            }
+            assignments = base;
+            saveLocalBackup(assignments);
+            renderFleetTable();
+            setSyncState("green", "Sincronizat Firebase RTDB");
+            updateClockLabel();
+          },
+          (error) => {
+            console.warn("Citirea /dispatch/assignments a eșuat; se folosește localStorage:", error);
+            const localFallback = loadLocalBackup();
+            if (localFallback) {
+              assignments = localFallback;
+              renderFleetTable();
+            }
+            setSyncState("amber", "Fallback Local");
+            updateClockLabel();
+            showBanner(
+              "Firebase Realtime Database a refuzat accesul sau este offline. Salvarea continuă local (localStorage).",
+              "info"
+            );
+          }
+        );
+      } catch (err) {
+        console.warn("Inițializare listener RTDB eșuată:", err);
+        setSyncState("amber", "Mod Local");
       }
     }
 
-    inspLineBtn.addEventListener("click", () => {
-      const unit = fleet.find((u) => u.id === selectedRowId);
-      if (unit) openLineModal(unit);
-    });
-
-    inspTourStatusBtn.addEventListener("click", () => {
-      const unit = fleet.find((u) => u.id === selectedRowId);
-      if (unit) openTourStatusModal(unit);
-    });
-
-    inspDriverBtn.addEventListener("click", () => {
-      const unit = fleet.find((u) => u.id === selectedRowId);
-      if (unit) openDriverModal(unit);
-    });
-
-    document.querySelectorAll(".tab-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        filterStatus.value = btn.dataset.tabStatus;
-        renderFleet();
-      });
-    });
-
-    btnClearFilters.addEventListener("click", () => {
-      searchBox.value = "";
-      filterLine.value = "ALL";
-      filterStatus.value = "ALL";
-      renderFleet();
-    });
-
-    function openLineModal(unit) {
-      activeVehicleId = unit.id;
-      lineModalTitle.textContent = `Schimbă linia — ${unit.id}`;
-      lineModalSub.textContent = `${unit.model} • Linia curentă: ${unit.line || "N/A"}`;
-      lineSelect.value = ["435", "470", "701"].includes(unit.line) ? unit.line : "N/A";
-      lineModal.classList.add("open");
+    function enterDispatchView(userLabel) {
+      sessionUserLabel.textContent = userLabel;
+      signOutBtn.textContent = "Deconectare";
+      setPlanningPanelOpen(false, false);
+      loginScreen.classList.add("hidden");
+      dispatchApp.classList.remove("hidden");
+      hideBanner();
+      attachRealtimeListener();
     }
 
-    lineCancelBtn.addEventListener("click", () => lineModal.classList.remove("open"));
-
-    lineSaveBtn.addEventListener("click", async () => {
-      if (!activeVehicleId) return;
-      const chosenLine = lineSelect.value;
-      fleet = fleet.map((u) => {
-        if (u.id !== activeVehicleId) return u;
-        const validTours = TOURS_BY_LINE[chosenLine] || [""];
-        const nextTour = validTours.includes(u.tour) ? u.tour : "";
-        const nextStatus = chosenLine === "N/A" && u.status === "În traseu" ? "Garaj" : u.status;
-        return { ...u, line: chosenLine, tour: nextTour, status: nextStatus };
-      });
-      lineModal.classList.remove("open");
-      renderFleet();
-      await persistFleet(fleet);
-    });
-
-    function openTourStatusModal(unit) {
-      activeVehicleId = unit.id;
-      tsModalTitle.textContent = `Tur & Status — ${unit.id}`;
-      tsModalSub.textContent = `${unit.model} • Linia: ${unit.line || "N/A"}`;
-      const validTours = TOURS_BY_LINE[unit.line] || [""];
-      tourSelect.innerHTML = validTours
-        .map((t) =>
-          t === ""
-            ? `<option value="">Fără tur</option>`
-            : `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`
-        )
-        .join("");
-      tourSelect.value = validTours.includes(unit.tour) ? unit.tour : "";
-      statusSelect.value = unit.status || "Garaj";
-      tourStatusModal.classList.add("open");
+    function enterLoginView() {
+      if (typeof unsubscribeAssignments === "function") {
+        unsubscribeAssignments();
+        unsubscribeAssignments = null;
+      }
+      dispatchApp.classList.add("hidden");
+      loginScreen.classList.remove("hidden");
     }
 
-    tsCancelBtn.addEventListener("click", () => tourStatusModal.classList.remove("open"));
-
-    tsSaveBtn.addEventListener("click", async () => {
-      if (!activeVehicleId) return;
-      const chosenTour = tourSelect.value;
-      const chosenStatus = statusSelect.value;
-      fleet = fleet.map((u) =>
-        u.id === activeVehicleId ? { ...u, tour: chosenTour, status: chosenStatus } : u
-      );
-      tourStatusModal.classList.remove("open");
-      renderFleet();
-      await persistFleet(fleet);
+    closePlanningBtn.addEventListener("click", () => {
+      setPlanningPanelOpen(false, false);
     });
 
-    function buildDriverOptionsHtml() {
-      return (
-        `<option value="">Nerepartizat</option>` +
-        PRESET_DRIVERS.map((d) => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join("")
-      );
-    }
-
-    function openDriverModal(unit) {
-      activeVehicleId = unit.id;
-      driverModalTitle.textContent = `Repartizează șoferi — ${unit.id}`;
-      driverModalSub.textContent = `${unit.model} • Linia: ${unit.line || "N/A"}`;
-      const opts = buildDriverOptionsHtml();
-      driverShift1Select.innerHTML = opts;
-      driverShift2Select.innerHTML = opts;
-      driverShift1Select.value = PRESET_DRIVERS.includes(unit.driver1) ? unit.driver1 : "";
-      driverShift2Select.value = PRESET_DRIVERS.includes(unit.driver2) ? unit.driver2 : "";
-      driverModal.classList.add("open");
-      driverShift1Select.focus();
-    }
-
-    driverCancelBtn.addEventListener("click", () => driverModal.classList.remove("open"));
-
-    driverClearBtn.addEventListener("click", async () => {
-      if (!activeVehicleId) return;
-      fleet = fleet.map((u) =>
-        u.id === activeVehicleId ? { ...u, driver1: "", driver2: "" } : u
-      );
-      driverModal.classList.remove("open");
-      renderFleet();
-      await persistFleet(fleet);
+    reopenPlanningBtn.addEventListener("click", () => {
+      loadVehicleIntoForm(activePark);
+      setPlanningPanelOpen(true, true);
     });
 
-    driverSaveBtn.addEventListener("click", async () => {
-      if (!activeVehicleId) return;
-      const d1 = driverShift1Select.value;
-      const d2 = driverShift2Select.value;
-      fleet = fleet.map((u) =>
-        u.id === activeVehicleId ? { ...u, driver1: d1, driver2: d2 } : u
-      );
-      driverModal.classList.remove("open");
-      renderFleet();
-      await persistFleet(fleet);
+    lineSelect.addEventListener("change", () => {
+      syncBlockOptionsForLine(getResolvedLineValue(), "");
     });
 
-    scheduleTypeSelect.addEventListener("change", async () => {
-      scheduleType = scheduleTypeSelect.value;
-      statusBarRight.textContent = `Program: ${scheduleType}`;
-      await persistScheduleType(scheduleType);
+    planningForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await commitPlanningForm({
+        status: statusSelect.value,
+        line: getResolvedLineValue(),
+        block: getResolvedBlockValue(),
+        shift1: shift1Select.value,
+        shift2: shift2Select.value
+      }, true);
     });
 
-    document.getElementById("btnExportPdf").addEventListener("click", () => {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const activeVehicles = fleet.filter((u) => u.status === "În traseu" && u.line !== "N/A");
-      const cleanSchedule = stripDiacritics(scheduleType);
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(15);
-      doc.text("Ecotrans STCM - Repartizare Flota", 14, 16);
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text(`Program: ${cleanSchedule}`, 14, 22);
-
-      let currentY = 29;
-      const lines = ["435", "470", "701"];
-
-      lines.forEach((lineNo) => {
-        const lineUnits = activeVehicles.filter((u) => u.line === lineNo);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11.5);
-        doc.text(`Linia: ${lineNo}`, 14, currentY);
-        currentY += 2.5;
-
-        const tableData = lineUnits.map((u) => [
-          u.tour ? stripDiacritics(u.tour) : "-",
-          stripDiacritics(u.id),
-          stripDiacritics(u.model),
-          formatDriversPdf(u)
-        ]);
-
-        if (tableData.length === 0) {
-          tableData.push(["-", "-", "Fara vehicule in traseu", "-"]);
-        }
-
-        doc.autoTable({
-          startY: currentY,
-          head: [["TUR", "PARC / NR.", "MODEL", "SOFERI (SCHIMB 1 / SCHIMB 2)"]],
-          body: tableData,
-          theme: "grid",
-          styles: {
-            fontSize: 8.8,
-            cellPadding: 2.6,
-            font: "helvetica",
-            textColor: [20, 20, 20],
-            lineColor: [200, 200, 200],
-            lineWidth: 0.2,
-            overflow: "linebreak"
-          },
-          headStyles: {
-            fillColor: [240, 244, 248],
-            textColor: [15, 23, 42],
-            fontStyle: "bold",
-            halign: "left"
-          },
-          columnStyles: {
-            0: { cellWidth: 18, halign: "left" },
-            1: { cellWidth: 32, fontStyle: "bold", halign: "left" },
-            2: { cellWidth: 44, halign: "left" },
-            3: { cellWidth: 88, halign: "left" }
-          },
-          margin: { left: 14, right: 14 }
-        });
-
-        currentY = doc.lastAutoTable.finalY + 7;
-      });
-
-      const pageHeight = doc.internal.pageSize.getHeight();
-      const now = new Date();
-      const dateStr = `${String(now.getDate()).padStart(2, "0")}.${String(now.getMonth() + 1).padStart(2, "0")}.${now.getFullYear()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-
-      doc.setDrawColor(160, 160, 160);
-      doc.setLineWidth(0.3);
-      doc.line(14, pageHeight - 16, 196, pageHeight - 16);
-
-      doc.setTextColor(30, 30, 30);
-      doc.setFontSize(8.5);
-      doc.setFont("helvetica", "bold");
-      doc.text("MNSys", 14, pageHeight - 10);
-      doc.setFontSize(5.5);
-      doc.text("TM", 24.5, pageHeight - 12);
-      doc.setFontSize(8.5);
-      doc.setFont("helvetica", "normal");
-      doc.text("Fleet Management - Ecotrans STCM", 28.5, pageHeight - 10);
-      doc.text(`GENERAT LA DATA: ${dateStr}`, 196, pageHeight - 10, { align: "right" });
-
-      doc.save(`Repartizare_STCM_${now.toISOString().slice(0, 10)}.pdf`);
+    vehicleSelect.addEventListener("change", () => {
+      loadVehicleIntoForm(vehicleSelect.value);
+      renderFleetTable();
     });
 
-    searchBox.addEventListener("input", renderFleet);
-    filterLine.addEventListener("change", renderFleet);
-    filterStatus.addEventListener("change", renderFleet);
+    sendToGarageBtn.addEventListener("click", async () => {
+      const park = vehicleSelect.value || activePark;
+      statusSelect.value = "Garaj";
+      lineSelect.value = "";
+      blockSelect.value = "";
+      shift1Select.value = "";
+      shift2Select.value = "";
+
+      await commitPlanningForm({
+        status: "Garaj",
+        line: "",
+        block: "",
+        shift1: "",
+        shift2: ""
+      }, true);
+    });
+
+    clearVehicleAssignmentBtn.addEventListener("click", async () => {
+      const park = vehicleSelect.value || activePark;
+      if (park === activePark) {
+        statusSelect.value = "Garaj";
+        lineSelect.value = "";
+        lineCustomInput.value = "";
+        lineCustomInput.classList.add("hidden");
+        blockSelect.value = "";
+        blockCustomInput.value = "";
+        blockCustomInput.classList.add("hidden");
+        shift1Select.value = "";
+        shift2Select.value = "";
+      }
+
+      await commitPlanningForm({
+        status: "Garaj",
+        line: "",
+        block: "",
+        shift1: "",
+        shift2: ""
+      }, false);
+    });
+
+    resetFiltersBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      filterStatusSelect.value = "ALL";
+      filterTypeSelect.value = "ALL";
+      filterShiftSelect.value = "ALL";
+      renderFleetTable();
+    });
+
+    searchInput.addEventListener("input", renderFleetTable);
+    filterStatusSelect.addEventListener("change", renderFleetTable);
+    filterTypeSelect.addEventListener("change", renderFleetTable);
+    filterShiftSelect.addEventListener("change", renderFleetTable);
+    dismissBannerBtn.addEventListener("click", hideBanner);
 
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      loginErr.style.display = "none";
-      loginSubmit.disabled = true;
-      loginSubmit.textContent = "Se conectează...";
+      hideLoginAlert();
 
-      try {
-        await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPass.value);
-      } catch (err) {
-        console.error(err);
-        loginErr.textContent = "Autentificare eșuată. Verifică emailul și parola din Firebase Authentication.";
-        loginErr.style.display = "block";
-      } finally {
-        loginSubmit.disabled = false;
-        loginSubmit.textContent = "Log in";
-      }
-    });
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
 
-    document.getElementById("btnLogout").addEventListener("click", async () => {
-      if (unsubFleet) { unsubFleet(); unsubFleet = null; }
-      if (unsubSchedule) { unsubSchedule(); unsubSchedule = null; }
-      await signOut(auth);
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        if (unsubFleet) { unsubFleet(); unsubFleet = null; }
-        if (unsubSchedule) { unsubSchedule(); unsubSchedule = null; }
-        mainView.classList.add("hidden");
-        loginView.classList.remove("hidden");
+      if (!email || !password) {
+        showLoginAlert("Te rugăm să introduci adresa de e-mail și parola.");
         return;
       }
 
-      loginView.classList.add("hidden");
-      mainView.classList.remove("hidden");
-      sessionMeta.textContent = `Conectat: ${user.email} • Sincronizare cloud Firebase Realtime Database`;
-
-      try {
-        await auth.authStateReady();
-        const snapSched = await get(scheduleTypeRef);
-        if (snapSched.exists()) {
-          scheduleType = snapSched.val();
-          scheduleTypeSelect.value = scheduleType;
-        } else {
-          await set(scheduleTypeRef, scheduleType);
-        }
-
-        const snapFleet = await get(fleetRef);
-        if (!snapFleet.exists()) {
-          const initialFleet = DEFAULT_FLEET.map((u, idx) => ({ ...u, sort_order: idx + 1 }));
-          await set(fleetRef, initialFleet);
-          fleet = normalizeFleet(initialFleet);
-        } else {
-          fleet = normalizeFleet(snapFleet.val());
-        }
-        renderFleet();
-      } catch (err) {
-        console.error(err);
+      if (!authInstance) {
+        showLoginAlert("Firebase Auth nu este disponibil momentan.");
+        return;
       }
 
-      if (unsubFleet) unsubFleet();
-      unsubFleet = onValue(
-        fleetRef,
-        (snapshot) => {
-          if (snapshot.exists()) {
-            fleet = normalizeFleet(snapshot.val());
-            renderFleet();
-          }
-        },
-        (err) => {
-          console.error(err);
-        }
-      );
+      loginSubmitBtn.disabled = true;
+      loginSubmitBtn.textContent = "Se autentifică...";
 
-      if (unsubSchedule) unsubSchedule();
-      unsubSchedule = onValue(
-        scheduleTypeRef,
-        (snapshot) => {
-          if (snapshot.exists()) {
-            scheduleType = snapshot.val();
-            scheduleTypeSelect.value = scheduleType;
-            statusBarRight.textContent = `Program: ${scheduleType}`;
-          }
-        },
-        (err) => {
-          console.error(err);
+      try {
+        await signInWithEmailAndPassword(authInstance, email, password);
+      } catch (err) {
+        console.error("Eroare login Firebase:", err);
+        const code = err?.code || "";
+        if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
+          showLoginAlert("E-mail sau parolă incorectă în Firebase Authentication.");
+        } else if (code === "auth/invalid-email") {
+          showLoginAlert("Formatul adresei de e-mail este invalid.");
+        } else if (code === "auth/network-request-failed") {
+          showLoginAlert("Eroare de rețea la conectarea către Firebase.");
+        } else {
+          showLoginAlert(`Autentificarea a eșuat (${code || "eroare necunoscută"}).`);
         }
-      );
+      } finally {
+        loginSubmitBtn.disabled = false;
+        loginSubmitBtn.textContent = "Autentificare";
+      }
     });
+
+    signOutBtn.addEventListener("click", async () => {
+      if (!currentUser || !authInstance) {
+        enterLoginView();
+        return;
+      }
+      try {
+        await signOut(authInstance);
+      } catch (err) {
+        console.error("Eroare la deconectare:", err);
+        enterLoginView();
+      }
+    });
+
+    const vectorMapBtn = document.getElementById("vectorMapBtn");
+    vectorMapBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+    });
+
+    appVersionBadge.textContent = APP_VERSION;
+    populateDropdowns();
+    const initialBackup = loadLocalBackup();
+    if (initialBackup) {
+      assignments = initialBackup;
+    }
+    loadVehicleIntoForm(activePark);
+    renderFleetTable();
+
+    try {
+      appInstance = initializeApp(firebaseConfig);
+      authInstance = getAuth(appInstance);
+      dbInstance = getDatabase(appInstance);
+
+      authInitStatus.innerHTML = `<span class="led led-green"></span><span>Firebase pregătit</span>`;
+
+      onAuthStateChanged(authInstance, (user) => {
+        currentUser = user || null;
+        if (user) {
+          enterDispatchView(user.email || user.uid);
+        } else {
+          enterLoginView();
+        }
+      });
+    } catch (err) {
+      console.error("Eroare inițializare Firebase:", err);
+      authInitStatus.innerHTML = `<span class="led led-red"></span><span>Eroare inițializare Firebase</span>`;
+      showLoginAlert("Nu s-a putut inițializa SDK-ul Firebase.");
+    }
   </script>
 </body>
 </html>
