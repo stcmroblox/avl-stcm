@@ -276,15 +276,16 @@
       opacity: 0.9;
     }
 
+    /* Dropdown cu butoane pe fundal alb */
     .dropdown-menu {
       display: none;
       position: absolute;
       top: 37px;
       left: 0;
-      min-width: 175px;
-      background: #2f5e91;
+      min-width: 185px;
+      background: #ffffff;
       border: 1px solid #163252;
-      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.45);
       z-index: 50;
     }
 
@@ -294,10 +295,11 @@
 
     .dropdown-item {
       padding: 8px 14px;
-      color: #ffffff;
+      background: #ffffff;
+      color: #1b2631;
       font-size: 13px;
       cursor: pointer;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid #e2e8f0;
       white-space: nowrap;
     }
 
@@ -306,7 +308,8 @@
     }
 
     .dropdown-item:hover {
-      background: #3d75b3;
+      background: #eaf1f8;
+      color: #0e2239;
     }
 
     .top-right {
@@ -488,8 +491,6 @@
     const btnMenu = document.getElementById('btn-menu');
     const dropdownMenu = document.getElementById('dropdown-menu');
 
-    // Sesiunea se păstrează doar pe durata sesiunii curente a tab-ului,
-    // iar la fiecare încărcare proaspătă a paginii forțăm delogarea ca să ceară mereu user & parolă
     let initialSignOutDone = false;
 
     async function initSessionRules() {
