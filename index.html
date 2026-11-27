@@ -276,7 +276,6 @@
       opacity: 0.9;
     }
 
-    /* Dropdown cu butoane pe fundal alb */
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -301,6 +300,9 @@
       cursor: pointer;
       border-bottom: 1px solid #e2e8f0;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .dropdown-item:last-child {
@@ -316,6 +318,28 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .user-menu-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 31px;
+      right: 0;
+      min-width: 165px;
+      background: #ffffff;
+      border: 1px solid #163252;
+      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.45);
+      z-index: 50;
+    }
+
+    .user-dropdown-menu.open {
+      display: block;
     }
 
     .info-pill {
@@ -372,6 +396,69 @@
       z-index: 5;
       width: 100%;
       height: calc(100vh - 66px);
+      padding: 16px;
+    }
+
+    .change-pwd-card {
+      max-width: 310px;
+      background: rgba(14, 34, 57, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 2px;
+      padding: 14px;
+      color: #ffffff;
+      font-size: 12.5px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      font-weight: bold;
+    }
+
+    .card-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .card-close:hover {
+      color: #ffffff;
+    }
+
+    .pwd-input {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      margin-top: 8px;
+      background: #383838;
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .pwd-btn {
+      width: 100%;
+      height: 32px;
+      margin-top: 10px;
+      background: linear-gradient(to bottom, #ffffff 0%, #e4e4e4 100%);
+      border: 1px solid #7a7a7a;
+      color: #222;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+
+    .pwd-status {
+      margin-top: 8px;
+      font-size: 11.5px;
+      text-align: center;
     }
   </style>
 </head>
@@ -430,15 +517,29 @@
 
       <div class="top-right">
         <div class="info-pill">
-          <span>Societatea Ecotrans STCM</span>
+          <span>Ecotrans STCM</span>
           <span class="ro-flag" title="RO">
             <span></span><span></span><span></span>
           </span>
         </div>
 
-        <div class="info-pill user-pill" id="user-pill" title="Click pentru deconectare">
-          <i class="fa-solid fa-user" style="font-size: 11px;"></i>
-          <span id="user-label">[utilizator]</span>
+        <div class="user-menu-wrapper">
+          <div class="info-pill user-pill" id="user-pill" title="Optiuni cont">
+            <i class="fa-solid fa-user" style="font-size: 11px;"></i>
+            <span id="user-label">[utilizator]</span>
+            <span style="font-size: 9px; opacity: 0.85;">▾</span>
+          </div>
+
+          <div id="user-dropdown-menu" class="user-dropdown-menu">
+            <div class="dropdown-item" id="btn-change-pwd">
+              <i class="fa-solid fa-key" style="font-size: 12px;"></i>
+              <span>Schimbare parola</span>
+            </div>
+            <div class="dropdown-item" id="btn-logout">
+              <i class="fa-solid fa-right-from-bracket" style="font-size: 12px;"></i>
+              <span>Deconectare</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -462,6 +563,7 @@
       setPersistence,
       browserSessionPersistence,
       signInWithEmailAndPassword,
+      updatePassword,
       onAuthStateChanged,
       signOut
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -488,8 +590,12 @@
     const errorMsg = document.getElementById('error-msg');
     const userLabel = document.getElementById('user-label');
     const userPill = document.getElementById('user-pill');
+    const userDropdownMenu = document.getElementById('user-dropdown-menu');
+    const btnChangePwd = document.getElementById('btn-change-pwd');
+    const btnLogout = document.getElementById('btn-logout');
     const btnMenu = document.getElementById('btn-menu');
     const dropdownMenu = document.getElementById('dropdown-menu');
+    const moduleStage = document.getElementById('module-stage');
 
     let initialSignOutDone = false;
 
@@ -508,12 +614,14 @@
         loginView.classList.remove('active');
         mainView.classList.add('active');
         dropdownMenu.classList.remove('open');
+        userDropdownMenu.classList.remove('open');
 
         const displayName = user.email ? user.email.split('@')[0] : 'utilizator';
         userLabel.textContent = `[${displayName}]`;
       } else {
         mainView.classList.remove('active');
         loginView.classList.add('active');
+        moduleStage.innerHTML = '';
         emailInput.value = '';
         passwordInput.value = '';
       }
@@ -543,20 +651,79 @@
       }
     });
 
-    userPill.addEventListener('click', async () => {
+    // Meniu dropdown utilizator („Schimbare parola” și „Deconectare”)
+    userPill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.remove('open');
+      userDropdownMenu.classList.toggle('open');
+    });
+
+    btnChangePwd.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.remove('open');
+
+      moduleStage.innerHTML = `
+        <div class="change-pwd-card">
+          <div class="card-header">
+            <span>Schimbare parola</span>
+            <button type="button" class="card-close" id="close-pwd-card" title="Inchide">✕</button>
+          </div>
+          <form id="pwd-form">
+            <input type="password" id="new-password" class="pwd-input" placeholder="Parola noua" required minlength="6">
+            <button type="submit" class="pwd-btn" id="btn-save-pwd">Salveaza parola</button>
+          </form>
+          <div id="pwd-status" class="pwd-status"></div>
+        </div>
+      `;
+
+      document.getElementById('close-pwd-card')?.addEventListener('click', () => {
+        moduleStage.innerHTML = '';
+      });
+
+      document.getElementById('pwd-form')?.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const newPwd = document.getElementById('new-password').value;
+        const pwdStatus = document.getElementById('pwd-status');
+        const btnSave = document.getElementById('btn-save-pwd');
+
+        btnSave.disabled = true;
+        pwdStatus.style.color = '#ffffff';
+        pwdStatus.textContent = 'Se schimba parola...';
+
+        try {
+          if (auth.currentUser) {
+            await updatePassword(auth.currentUser, newPwd);
+            pwdStatus.style.color = '#a3ffb4';
+            pwdStatus.textContent = 'Parola a fost schimbata cu succes!';
+          }
+        } catch (err) {
+          pwdStatus.style.color = '#ffb4b4';
+          pwdStatus.textContent = 'Eroare: Se cere re-autentificare recenta.';
+        } finally {
+          btnSave.disabled = false;
+        }
+      });
+    });
+
+    btnLogout.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.remove('open');
       await signOut(auth);
     });
 
+    // Meniu dropdown dispecerat
     btnMenu.addEventListener('click', (e) => {
       e.stopPropagation();
+      userDropdownMenu.classList.remove('open');
       dropdownMenu.classList.toggle('open');
     });
 
     document.addEventListener('click', () => {
       dropdownMenu.classList.remove('open');
+      userDropdownMenu.classList.remove('open');
     });
 
-    document.querySelectorAll('.dropdown-item').forEach((item) => {
+    document.querySelectorAll('#dropdown-menu .dropdown-item').forEach((item) => {
       item.addEventListener('click', () => {
         dropdownMenu.classList.remove('open');
         const moduleName = item.dataset.module;
