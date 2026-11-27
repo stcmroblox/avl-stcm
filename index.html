@@ -232,13 +232,14 @@
       opacity: 0.16;
     }
 
+    /* Bara superioară gri închis */
     .top-bar {
       position: relative;
       z-index: 20;
       height: 38px;
       width: 100%;
-      background: linear-gradient(to bottom, #163252 0%, #0e2239 100%);
-      border-bottom: 1px solid #081422;
+      background: linear-gradient(to bottom, #2c2e33 0%, #1d1f23 100%);
+      border-bottom: 1px solid #121316;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -256,8 +257,8 @@
     .menu-trigger {
       height: 28px;
       padding: 0 12px;
-      background: linear-gradient(to bottom, #2a5585 0%, #1c3c61 100%);
-      border: 1px solid #4575a8;
+      background: linear-gradient(to bottom, #42464d 0%, #2d3036 100%);
+      border: 1px solid #595e68;
       border-radius: 2px;
       color: #ffffff;
       font-size: 13px;
@@ -268,7 +269,7 @@
     }
 
     .menu-trigger:hover {
-      background: linear-gradient(to bottom, #3467a1 0%, #224873 100%);
+      background: linear-gradient(to bottom, #4d525b 0%, #363a41 100%);
     }
 
     .menu-trigger .caret {
@@ -283,7 +284,7 @@
       left: 0;
       min-width: 185px;
       background: #ffffff;
-      border: 1px solid #163252;
+      border: 1px solid #1d1f23;
       box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.45);
       z-index: 50;
     }
@@ -333,7 +334,7 @@
       right: 0;
       min-width: 165px;
       background: #ffffff;
-      border: 1px solid #163252;
+      border: 1px solid #1d1f23;
       box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.45);
       z-index: 50;
     }
@@ -345,8 +346,8 @@
     .info-pill {
       height: 26px;
       padding: 0 10px;
-      background: linear-gradient(to bottom, #3a6ca3 0%, #264d78 100%);
-      border: 1px solid #122842;
+      background: linear-gradient(to bottom, #454950 0%, #2e3137 100%);
+      border: 1px solid #17181c;
       border-radius: 2px;
       color: #ffffff;
       font-size: 12.5px;
@@ -373,7 +374,7 @@
     }
 
     .user-pill:hover {
-      background: linear-gradient(to bottom, #457cb8 0%, #2d598a 100%);
+      background: linear-gradient(to bottom, #51565f 0%, #373b42 100%);
     }
 
     .sub-header-line {
@@ -396,9 +397,151 @@
       z-index: 5;
       width: 100%;
       height: calc(100vh - 66px);
-      padding: 16px;
+      padding: 12px 14px 22px 14px;
+      overflow-y: auto;
     }
 
+    /* ------------------- 3. HARTA LINIARIZATA - RUTE ------------------- */
+    .lin-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+
+    .lin-title {
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    }
+
+    .lin-controls-box {
+      background: rgba(31, 61, 96, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 2px;
+      padding: 5px 8px;
+      color: #ffffff;
+      font-size: 10.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .lin-controls-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lin-mini-btn {
+      padding: 2px 7px;
+      background: linear-gradient(to bottom, #5c7d9f 0%, #3f5c7a 100%);
+      border: 1px solid #24384e;
+      border-radius: 2px;
+      color: #ffffff;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .lin-mini-btn:hover {
+      background: linear-gradient(to bottom, #6b8eb2 0%, #496889 100%);
+    }
+
+    .lin-mode-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .lin-mode-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .lin-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .lin-panel {
+      background: rgba(41, 78, 121, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 2px;
+      padding: 8px 10px 12px 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .lin-section-title {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 8px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .lin-sub-empty-title {
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 400;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .lin-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .lin-zones-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .lin-depouri-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .route-btn {
+      width: 100%;
+      height: 24px;
+      padding: 0 8px;
+      background: linear-gradient(to bottom, #6484a6 0%, #486584 50%, #39526e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 2px;
+      color: #ffffff;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .route-btn:hover {
+      background: linear-gradient(to bottom, #7597ba 0%, #557598 50%, #446080 100%);
+    }
+
+    .route-btn.selected {
+      background: linear-gradient(to bottom, #3794e6 0%, #1d6ec0 100%);
+      border-color: #bfe0ff;
+      box-shadow: 0 0 6px rgba(88, 175, 255, 0.7);
+    }
+
+    /* Card schimbare parolă */
     .change-pwd-card {
       max-width: 310px;
       background: rgba(14, 34, 57, 0.92);
@@ -517,7 +660,7 @@
 
       <div class="top-right">
         <div class="info-pill">
-          <span>Societatea Ecotrans STCM</span>
+          <span>Ecotrans STCM</span>
           <span class="ro-flag" title="RO">
             <span></span><span></span><span></span>
           </span>
@@ -723,11 +866,88 @@
       userDropdownMenu.classList.remove('open');
     });
 
+    // Render Harta Liniarizată - Rute
+    function renderHartaLiniarizata() {
+      const liniiAutobuz = ["429", "435", "470", "476", "481"];
+      const zone = ["PASAJ CFR CHITILA", "CELOFIBREI BRAGADIRU"];
+      const depouri = ["AUTOBAZA CHITILA (321)"];
+
+      moduleStage.innerHTML = `
+        <div class="lin-header-row">
+          <div class="lin-title">HARTA LINIARIZATA - RUTE</div>
+          <div class="lin-controls-box">
+            <div class="lin-controls-top">
+              <button type="button" class="lin-mini-btn" id="btn-vizualizare">Vizualizare</button>
+              <button type="button" class="lin-mini-btn" id="btn-deselecteaza">Deselecteaza tot</button>
+            </div>
+            <div class="lin-mode-row">
+              <span>Dispecerat:</span>
+              <label><input type="radio" name="disp-mode" value="fara"> Fara selectie</label>
+              <label><input type="radio" name="disp-mode" value="cu" checked> Cu selectie</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="lin-grid">
+          <!-- Coloana 1: Autobuz + Troleibuz + Tramvai + Metrou -->
+          <div class="lin-panel">
+            <div class="lin-section-title">Autobuz</div>
+            <div class="lin-buttons-grid" id="autobuz-grid">
+              ${liniiAutobuz.map(linie => `<button type="button" class="route-btn" data-type="autobuz" data-val="${linie}">${linie}</button>`).join('')}
+            </div>
+
+            <div class="lin-sub-empty-title">Troleibuz</div>
+            <div class="lin-sub-empty-title">Tramvai</div>
+            <div class="lin-sub-empty-title">Metrou</div>
+          </div>
+
+          <!-- Coloana 2: Zone -->
+          <div class="lin-panel">
+            <div class="lin-section-title">Zone</div>
+            <div class="lin-zones-grid" id="zone-grid">
+              ${zone.map(z => `<button type="button" class="route-btn" data-type="zona" data-val="${z}">${z}</button>`).join('')}
+            </div>
+          </div>
+
+          <!-- Coloana 3: Depouri -->
+          <div class="lin-panel">
+            <div class="lin-section-title">Depouri</div>
+            <div class="lin-depouri-list" id="depouri-list">
+              ${depouri.map(d => `<button type="button" class="route-btn" data-type="depou" data-val="${d}">${d}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+
+      const routeBtns = moduleStage.querySelectorAll('.route-btn');
+      routeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cuSelectie = moduleStage.querySelector('input[name="disp-mode"][value="cu"]')?.checked;
+          if (!cuSelectie) return;
+          btn.classList.toggle('selected');
+        });
+      });
+
+      document.getElementById('btn-deselecteaza')?.addEventListener('click', () => {
+        routeBtns.forEach(btn => btn.classList.remove('selected'));
+      });
+
+      document.getElementById('btn-vizualizare')?.addEventListener('click', () => {
+        const selectate = Array.from(moduleStage.querySelectorAll('.route-btn.selected')).map(b => b.dataset.val);
+        console.log("Elemente selectate pentru vizualizare:", selectate);
+      });
+    }
+
     document.querySelectorAll('#dropdown-menu .dropdown-item').forEach((item) => {
       item.addEventListener('click', () => {
         dropdownMenu.classList.remove('open');
         const moduleName = item.dataset.module;
-        console.log("Modul selectat:", moduleName);
+        if (moduleName === 'liniarizata') {
+          renderHartaLiniarizata();
+        } else {
+          moduleStage.innerHTML = '';
+          console.log("Modul selectat:", moduleName);
+        }
       });
     });
   </script>
